@@ -1,5 +1,6 @@
 import { ScrollView, StyleSheet, Text } from "react-native";
 
+import DemoGjendja from "@/components/DemoGjendja";
 import Kartela from "@/components/Kartela";
 
 export default function Index() {
@@ -22,6 +23,8 @@ export default function Index() {
         titulli="Komponentët"
         teksti="Pjesë të vogla dhe të ripërdorshme të ekranit, si kjo kartelë."
       />
+
+      <DemoGjendja />
     </ScrollView>
   );
 }
