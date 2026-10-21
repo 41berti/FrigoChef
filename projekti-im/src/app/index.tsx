@@ -1,40 +1,36 @@
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { Link } from "expo-router";
+import { FlatList, Pressable, StyleSheet, Text } from "react-native";
 
-import DemoGjendja from "@/components/DemoGjendja";
 import Kartela from "@/components/Kartela";
+import { artikujt } from "@/data/artikujt";
 
 export default function Index() {
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.pershendetje}>
-        Mirë se vini! Ky është ekrani i parë i aplikacionit tim.
-      </Text>
-
-      {/* I njëjti komponent, i përdorur disa herë me props të ndryshme */}
-      <Kartela
-        titulli="Çfarë është React Native?"
-        teksti="Një mënyrë për të ndërtuar aplikacione për telefon me JavaScript dhe TypeScript."
-      />
-      <Kartela
-        titulli="Çfarë është Expo?"
-        teksti="Një mjet që na lejon ta shohim aplikacionin menjëherë në telefon me Expo Go."
-      />
-      <Kartela
-        titulli="Komponentët"
-        teksti="Pjesë të vogla dhe të ripërdorshme të ekranit, si kjo kartelë."
-      />
-
-      <DemoGjendja />
-    </ScrollView>
+    <FlatList
+      data={artikujt}
+      // Çelësi është id-ja e recetës (jo indeksi), që çdo rresht të mbajë gjendjen e vet.
+      keyExtractor={(item) => item.id}
+      ListHeaderComponent={
+        <Text style={styles.koka}>Receta të rekomanduara nga frigoriferi yt</Text>
+      }
+      renderItem={({ item }) => (
+        // Kartela përmban View, prandaj Link-u e kalon lidhjen te Pressable me asChild.
+        <Link href={`/artikull/${item.id}`} asChild>
+          <Pressable style={styles.rreshti}>
+            <Kartela titulli={item.titulli} teksti={`${item.kohaMinuta} min`} />
+          </Pressable>
+        </Link>
+      )}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-  pershendetje: {
+  rreshti: { padding: 16 },
+  koka: {
     fontSize: 16,
-    marginBottom: 16,
+    fontWeight: "bold",
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
 });
