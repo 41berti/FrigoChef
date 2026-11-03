@@ -15,4 +15,4 @@ FrigoChef i tregon studentit, brenda një minute, çka mund të gatuajë tani me
 ## Çka na duhet
 Na duhen studentë që gatuajnë vetë dhe e provojnë aplikacionin çdo javë. Rruga 1 kërkon së paku 10 përdorues të vërtetë çdo javë, në javët 10 deri në 12.
 
-Kohëzgjatja e provës: ___ (prova 1), ___ (prova 2)
+Kohëzgjatja e provës: rreth 1 minutë (prova 1), pak më pak se 1 minutë (prova 2)
