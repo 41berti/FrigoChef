@@ -24,4 +24,6 @@ FrigoChef i tregon studentit, brenda një minute, çka mund të gatuajë tani me
 - Komentet dhe vlerësimet
 
 ## Skicat
-Skicat e ekraneve nga letra do të shtohen në docs/skica/.
+![Rrjedha kryesore e FrigoChef: Ballina, Lista e recetave, Detajet e recetës](docs/skica/rrjedha.svg)
+
+Ekranet veç e veç: [1 · Ballina](docs/skica/1-ballina.svg) · [2 · Lista e recetave](docs/skica/2-lista.svg) · [3 · Detajet e recetës](docs/skica/3-detajet.svg)
