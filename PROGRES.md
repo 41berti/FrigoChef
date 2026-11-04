@@ -5,7 +5,7 @@
 - **M1, lista nga Supabase:** Ballina liston recetat nga tabela `recetat`. ([PR #10](https://github.com/41berti/FrigoChef/pull/10))
 - **M2, shtimi nga telefoni:** forma poshtë Ballinës shton një recetë. Ajo ruhet në Supabase dhe mbetet pas rihapjes së aplikacionit. ([PR #12](https://github.com/41berti/FrigoChef/pull/12))
 
-M1 dhe M2 i testoi Alberti në telefon, në iPhone 14 Pro. Testi i Arianitit në telefonin e vet është ende i hapur ([#9](https://github.com/41berti/FrigoChef/issues/9)).
+M1 dhe M2 i testoi Alberti në telefon, në iPhone 14 Pro. Arianiti e testoi M1 në telefonin e vet, në Expo Go: Ballina liston të njëjtat receta si te Alberti ([#9](https://github.com/41berti/FrigoChef/issues/9)).
 
 ## Çka bëri agjenti
 - **SQL-ja:** i ruajti `recetat.sql` dhe `02-shto-recete.sql` te `projekti-im/supabase/` dhe i ekzekutoi në Supabase.
