@@ -2,6 +2,8 @@
 
 FrigoChef i tregon studentit, brenda një minute, çka mund të gatuajë tani me përbërësit që ka në frigorifer. Është për studentin që jeton vetëm dhe gatuan vetë. Në MVP përbërësit zgjidhen me prekje; fotoja me AI vjen më vonë.
 
+Problemi, nga 3 bisedat te `BISEDAT.md`: studenti ka ushqim në frigorifer, por nuk di çka të gatuajë me të, dhe një pjesë e ushqimit i prishet.
+
 Ekranet kryesore, sipas `HARTA.md`:
 
 - **Ballina** (`src/app/index.tsx`): do ta pyesë përdoruesin "Çka ke në frigorifer?". Sot liston recetat nga tabela `recetat` në Supabase.
