@@ -1,3 +1,15 @@
+## Projekti
+
+FrigoChef i tregon studentit, brenda një minute, çka mund të gatuajë tani me përbërësit që ka në frigorifer. Është për studentin që jeton vetëm dhe gatuan vetë. Në MVP përbërësit zgjidhen me prekje; fotoja me AI vjen më vonë.
+
+Ekranet kryesore, sipas `HARTA.md`:
+
+- **Ballina** (`src/app/index.tsx`): do ta pyesë përdoruesin "Çka ke në frigorifer?". Sot liston recetat nga tabela `recetat` në Supabase.
+- **Lista e recetave**: recetat që përputhen me përbërësit e zgjedhur. Ende s'është ndarë nga Ballina dhe s'ka filtrim.
+- **Detajet e recetës** (`src/app/artikull/[id].tsx`): përbërësit, koha dhe hapat. Sot lexon nga `src/data/artikujt.ts`.
+
+## Expo mobile app
+
 This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
 
 ## Expo has changed — do not trust your training data
