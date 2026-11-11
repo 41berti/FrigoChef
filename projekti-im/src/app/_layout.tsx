@@ -3,6 +3,7 @@ import { NativeTabs } from "expo-router/native-tabs";
 import { StatusBar } from "expo-status-bar";
 import { Platform } from "react-native";
 
+import { ZgjedhjaProvider } from "@/gjendja/zgjedhja";
 import { useTemaENavigimit } from "@/tema/navigimi";
 import { useNgjyrat } from "@/tema/tema";
 
@@ -29,21 +30,28 @@ export default function RootLayout() {
   return (
     // ThemeProvider ua jep ngjyrat tona header-ave dhe sfondit të çdo ekrani.
     <ThemeProvider value={tema}>
-      {/* Çdo Trigger është një tab. `name` është emri i dosjes te src/app/. */}
-      <NativeTabs tintColor={ngjyrat.primare} {...ngjyratEShiritit}>
-        <NativeTabs.Trigger name="(frigoriferi)">
-          <NativeTabs.Trigger.Label>Frigoriferi</NativeTabs.Trigger.Label>
-          {/* sf është ikona në iOS (SF Symbols), md është ikona në Android (Material). */}
-          <NativeTabs.Trigger.Icon
-            sf={{ default: "refrigerator", selected: "refrigerator.fill" }}
-            md="kitchen"
-          />
-        </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="(recetat)">
-          <NativeTabs.Trigger.Label>Recetat</NativeTabs.Trigger.Label>
-          <NativeTabs.Trigger.Icon sf={{ default: "book", selected: "book.fill" }} md="menu_book" />
-        </NativeTabs.Trigger>
-      </NativeTabs>
+      {/* ZgjedhjaProvider i rrethon të dy tab-et, që të gjitha ekranet ta shohin
+          të njëjtën zgjedhje të përbërësve. */}
+      <ZgjedhjaProvider>
+        {/* Çdo Trigger është një tab. `name` është emri i dosjes te src/app/. */}
+        <NativeTabs tintColor={ngjyrat.primare} {...ngjyratEShiritit}>
+          <NativeTabs.Trigger name="(frigoriferi)">
+            <NativeTabs.Trigger.Label>Frigoriferi</NativeTabs.Trigger.Label>
+            {/* sf është ikona në iOS (SF Symbols), md është ikona në Android (Material). */}
+            <NativeTabs.Trigger.Icon
+              sf={{ default: "refrigerator", selected: "refrigerator.fill" }}
+              md="kitchen"
+            />
+          </NativeTabs.Trigger>
+          <NativeTabs.Trigger name="(recetat)">
+            <NativeTabs.Trigger.Label>Recetat</NativeTabs.Trigger.Label>
+            <NativeTabs.Trigger.Icon
+              sf={{ default: "book", selected: "book.fill" }}
+              md="menu_book"
+            />
+          </NativeTabs.Trigger>
+        </NativeTabs>
+      </ZgjedhjaProvider>
       {/* Ikonat e orës dhe baterisë bëhen të bardha në dark mode. */}
       <StatusBar style="auto" />
     </ThemeProvider>
