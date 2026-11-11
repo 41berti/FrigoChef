@@ -4,11 +4,33 @@ FrigoChef i tregon studentit, brenda një minute, çka mund të gatuajë tani me
 
 Problemi, nga 3 bisedat te `BISEDAT.md`: studenti ka ushqim në frigorifer, por nuk di çka të gatuajë me të, dhe një pjesë e ushqimit i prishet.
 
-Ekranet kryesore, sipas `HARTA.md`:
+### Navigimi
 
-- **Ballina** (`src/app/index.tsx`): do ta pyesë përdoruesin "Çka ke në frigorifer?". Sot liston recetat nga tabela `recetat` në Supabase.
-- **Lista e recetave**: recetat që përputhen me përbërësit e zgjedhur. Ende s'është ndarë nga Ballina dhe s'ka filtrim.
-- **Detajet e recetës** (`src/app/artikull/[id].tsx`): përbërësit, koha dhe hapat. Sot lexon nga `src/data/artikujt.ts`.
+`src/app/_layout.tsx` ka dy tab-e me `NativeTabs` nga `expo-router/native-tabs`. Secili tab është një dosje me `Stack`-un e vet.
+
+- **Tab-i "Frigoriferi"** (`src/app/(frigoriferi)/`), rrjedha kryesore e `HARTA.md`:
+  - `index.tsx` · Ballina "Çka ke në frigorifer?": chip-at e përbërësve, numëruesi dhe butoni "Shiko recetat".
+  - `lista.tsx` · "Recetat për ty" (`/lista`): recetat nga Supabase, të renditura sipas përputhjes me përbërësit e zgjedhur.
+- **Tab-i "Recetat"** (`src/app/(recetat)/`):
+  - `recetat.tsx` · të gjitha recetat (`/recetat`).
+  - `shto.tsx` · ekrani "Recetë e re" (`/shto`), me `FormaRecete`.
+- **Detajet e recetës** (`src/app/(frigoriferi,recetat)/artikull/[id].tsx`): dosja me dy emra e vendos ekranin në të dy tab-et. Tregon përbërësit (ke / mungon) dhe hapat me numra.
+
+### Të dhënat
+
+- **Supabase, tabela `recetat`:** `id`, `titulli`, `koha_minuta`, `perberesit text[]`, `hapat text[]`, `foto_url`, `krijuar_me`. SQL-ja është te `supabase/`. Çdo ndryshim i skemës i tregohet Albertit dhe pret "po".
+- `src/data/recetat.ts`: `merrRecetat()`, `merrReceten(id)` dhe `shtoReceten()`. Ekranet nuk e thërrasin `supabase` drejt.
+- `src/data/perputhja.ts`: i ndan përbërësit në "ke" dhe "mungon" dhe i rendit recetat.
+- `src/data/perberesit.ts`: grupet e chip-ave te Ballina.
+- `src/gjendja/zgjedhja.tsx`: përbërësit e zgjedhur, në një Context. Ruhen vetëm në memorie.
+- `src/data/artikujt.ts`: të dhënat e vjetra lokale. Mbetet në repo, por ekranet nuk e përdorin më.
+
+### Pamja
+
+- `src/tema/tema.ts`: ngjyrat (light dhe dark), shkronjat, hapësirat dhe rrezet, nga skicat te `docs/skica/`. Mos shkruaj ngjyra apo madhësi drejt në ekrane: përdor `useNgjyrat()` dhe komponentin `Teksti`.
+- Komponentët e përbashkët janë te `src/components/`: `Teksti`, `Butoni`, `Fusha`, `Chip`, `Etiketa`, `Ikona`, `Kartela`, `KartelaRecete`, `RreshtPerberesi`, `Hapi`, `VendiIFotos`.
+- `src/veglat/dridhja.ts`: dridhjet me `expo-haptics`.
+- `src/components/DemoGjendja.tsx` është punë e ligjëratës. Mos e fshi dhe mos e ndrysho.
 
 ## Expo mobile app
 
