@@ -1,17 +1,35 @@
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from "react-native";
 
+import Etiketa from "@/components/Etiketa";
+import Hapi from "@/components/Hapi";
+import Ikona from "@/components/Ikona";
+import RreshtPerberesi from "@/components/RreshtPerberesi";
 import Teksti from "@/components/Teksti";
+import VendiIFotos from "@/components/VendiIFotos";
+import { ndajPerberesit } from "@/data/perputhja";
 import { merrReceten, type Receta } from "@/data/recetat";
+import { useZgjedhja } from "@/gjendja/zgjedhja";
 import { hapesira, permasat, useNgjyrat } from "@/tema/tema";
 
+// Detajet e recetës. Dosja (frigoriferi,recetat) e vendos këtë ekran në të dy tab-et,
+// prandaj hapet si nga lista me përputhje, ashtu edhe nga lista e të gjitha recetave.
 export default function Detajet() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [receta, setReceta] = useState<Receta | null>(null);
   const [dukeNgarkuar, setDukeNgarkuar] = useState(true);
   const [gabimi, setGabimi] = useState<string | null>(null);
+  const { zgjedhur } = useZgjedhja();
   const ngjyrat = useNgjyrat();
+  // Gjerësia e ekranit ndryshon kur telefoni rrotullohet ose në tablet.
+  const { width } = useWindowDimensions();
 
   // Receta kërkohet nga Supabase kur hapet ekrani, dhe prapë nëse ndryshon id-ja në URL.
   useEffect(() => {
@@ -65,41 +83,83 @@ export default function Detajet() {
     );
   }
 
+  // Pa zgjedhje te Ballina, përbërësit dalin neutralë, pa shenjat "ke" dhe "mungon".
+  const kaZgjedhje = zgjedhur.length > 0;
+  const { ke, mungojne } = ndajPerberesit(receta.perberesit, zgjedhur);
+  // Në ekrane të gjera përbërësit dalin në dy kolona, në telefon në një.
+  const gjeresiaERreshtit = width >= 600 ? "50%" : "100%";
+
   return (
     // ScrollView, që teksti i gjatë të lexohet edhe në telefona të vegjël.
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.permbajtja}
     >
-      <Teksti lloji="titull">{receta.titulli}</Teksti>
-      <Teksti lloji="dytesor" ngjyra="tekstiDytesor">
-        Koha: {receta.koha_minuta} min
-      </Teksti>
+      <VendiIFotos lloji="madh" />
 
-      <Teksti lloji="nentitull" style={styles.nentitulli}>
-        Përbërësit
-      </Teksti>
-      {receta.perberesit.length === 0 ? (
-        // Recetat e shtuara para se të kishim këtë kolonë e kanë listën bosh.
-        <Teksti ngjyra="tekstiDytesor">{"Kjo recetë s'ka përbërës të shënuar."}</Teksti>
-      ) : (
-        receta.perberesit.map((perberesi, indeksi) => (
-          <Teksti key={`${indeksi}-${perberesi}`}>• {perberesi}</Teksti>
-        ))
-      )}
+      <View style={styles.koka}>
+        <Teksti lloji="titullIMadh" accessibilityRole="header">
+          {receta.titulli}
+        </Teksti>
+        <View style={styles.rreshti}>
+          <Ikona emri="ora" />
+          <Teksti ngjyra="tekstiDytesor">{receta.koha_minuta} min</Teksti>
+          {kaZgjedhje && receta.perberesit.length > 0 && (
+            <Etiketa
+              lloji="primare"
+              titulli={`ke ${ke.length} nga ${receta.perberesit.length} përbërës`}
+            />
+          )}
+        </View>
+      </View>
 
-      <Teksti lloji="nentitull" style={styles.nentitulli}>
-        Hapat
-      </Teksti>
-      {receta.hapat.length === 0 ? (
-        <Teksti ngjyra="tekstiDytesor">{"Kjo recetë s'ka hapa të shënuar."}</Teksti>
-      ) : (
-        receta.hapat.map((hapi, indeksi) => (
-          <Teksti key={`${indeksi}-${hapi}`}>
-            {indeksi + 1}. {hapi}
-          </Teksti>
-        ))
-      )}
+      <View style={styles.pjesa}>
+        <Teksti lloji="nentitull" accessibilityRole="header">
+          Përbërësit
+        </Teksti>
+        {receta.perberesit.length === 0 ? (
+          // Recetat e shtuara para se të kishim këtë kolonë e kanë listën bosh.
+          <Teksti ngjyra="tekstiDytesor">{"Kjo recetë s'ka përbërës të shënuar."}</Teksti>
+        ) : (
+          <View style={styles.perberesit}>
+            {kaZgjedhje
+              ? // Së pari ata që i ke, pastaj ata që mungojnë.
+                [...ke, ...mungojne].map((perberesi, indeksi) => (
+                  <View key={`${indeksi}-${perberesi}`} style={{ width: gjeresiaERreshtit }}>
+                    <RreshtPerberesi
+                      emri={perberesi}
+                      gjendja={indeksi < ke.length ? "ke" : "mungon"}
+                    />
+                  </View>
+                ))
+              : receta.perberesit.map((perberesi, indeksi) => (
+                  <View key={`${indeksi}-${perberesi}`} style={{ width: gjeresiaERreshtit }}>
+                    <RreshtPerberesi emri={perberesi} gjendja="neutral" />
+                  </View>
+                ))}
+          </View>
+        )}
+      </View>
+
+      <View style={styles.pjesa}>
+        <Teksti lloji="nentitull" accessibilityRole="header">
+          Hapat
+        </Teksti>
+        {receta.hapat.length === 0 ? (
+          <Teksti ngjyra="tekstiDytesor">{"Kjo recetë s'ka hapa të shënuar."}</Teksti>
+        ) : (
+          <View>
+            {receta.hapat.map((hapi, indeksi) => (
+              <Hapi
+                key={`${indeksi}-${hapi}`}
+                numri={indeksi + 1}
+                teksti={hapi}
+                iFundit={indeksi === receta.hapat.length - 1}
+              />
+            ))}
+          </View>
+        )}
+      </View>
     </ScrollView>
   );
 }
@@ -107,7 +167,7 @@ export default function Detajet() {
 const styles = StyleSheet.create({
   permbajtja: {
     alignSelf: "center",
-    gap: hapesira.xs,
+    gap: hapesira.xxl,
     maxWidth: permasat.gjeresiaMaksimale,
     padding: hapesira.xl,
     width: "100%",
@@ -115,5 +175,8 @@ const styles = StyleSheet.create({
   // Ngarkimi, gabimi dhe "nuk u gjet" rrinë në mes të ekranit.
   gjendja: { flex: 1, justifyContent: "center", padding: hapesira.xl },
   neMes: { textAlign: "center" },
-  nentitulli: { marginTop: hapesira.xl },
+  koka: { gap: hapesira.s },
+  rreshti: { alignItems: "center", flexDirection: "row", flexWrap: "wrap", gap: hapesira.s },
+  pjesa: { gap: hapesira.m },
+  perberesit: { flexDirection: "row", flexWrap: "wrap" },
 });
