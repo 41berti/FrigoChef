@@ -1,112 +1,97 @@
-import { Link } from "expo-router";
-import { useHeaderHeight } from "expo-router/react-navigation";
-import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  KeyboardAvoidingView,
-  Pressable,
-  StyleSheet,
-  Text,
-} from "react-native";
+import { Link, useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from "react-native";
 
-import FormaRecete from "@/components/FormaRecete";
+import Butoni from "@/components/Butoni";
 import Kartela from "@/components/Kartela";
-import { supabase } from "@/data/supabase";
-
-// Një rresht i tabelës `recetat` në Supabase.
-type Receta = {
-  id: string;
-  titulli: string;
-  koha_minuta: number;
-};
+import Teksti from "@/components/Teksti";
+import { merrRecetat, type Receta } from "@/data/recetat";
+import { hapesira, permasat, useNgjyrat } from "@/tema/tema";
 
 export default function Index() {
   const [recetat, setRecetat] = useState<Receta[]>([]);
   const [dukeNgarkuar, setDukeNgarkuar] = useState(true);
   const [gabimi, setGabimi] = useState<string | null>(null);
-  const lartesiaHeader = useHeaderHeight();
+  const ngjyrat = useNgjyrat();
+  const router = useRouter();
 
-  // Thirret kur hapet ekrani dhe sa herë që forma shton një recetë.
   // Gjendja ndryshon brenda .then, pra vetëm pasi të vijë përgjigjja nga Supabase.
-  function ngarkoRecetat() {
-    supabase
-      .from("recetat")
-      .select("id, titulli, koha_minuta")
-      // Më të rejat në krye. Recetat me të njëjtën kohë renditen sipas titullit.
-      .order("krijuar_me", { ascending: false })
-      .order("titulli")
-      .then(({ data, error }) => {
-        if (error) {
-          setGabimi(error.message);
-        } else {
-          setGabimi(null);
-          setRecetat(data);
-        }
-        setDukeNgarkuar(false);
-      });
-  }
-
-  // Me [] në fund, ky kod ekzekutohet vetëm një herë, kur hapet ekrani.
-  useEffect(() => {
-    ngarkoRecetat();
+  // useCallback e mban të njëjtin funksion mes rivizatimeve, që useFocusEffect
+  // të mos e thërrasë pa nevojë.
+  const ngarkoRecetat = useCallback(() => {
+    merrRecetat().then(({ data, error }) => {
+      if (error) {
+        setGabimi(error.message);
+      } else {
+        setGabimi(null);
+        setRecetat(data);
+      }
+      setDukeNgarkuar(false);
+    });
   }, []);
 
-  if (dukeNgarkuar) {
-    return <ActivityIndicator style={styles.gjendja} size="large" />;
-  }
+  // Thirret sa herë që ekrani del në pah: kur hapet aplikacioni
+  // dhe kur kthehemi nga ekrani "Recetë e re".
+  useFocusEffect(ngarkoRecetat);
 
   return (
-    // Kur hapet tastiera, forma ngrihet mbi të. Offset-i llogarit header-in e Stack-ut,
-    // përndryshe një pjesë e formës mbetet nën tastierë.
-    <KeyboardAvoidingView
-      style={styles.faqja}
-      behavior="padding"
-      keyboardVerticalOffset={lartesiaHeader}
-    >
-      <FlatList
-        style={styles.faqja}
-        data={recetat}
-        // Çelësi është id-ja e recetës (jo indeksi), që çdo rresht të mbajë gjendjen e vet.
-        keyExtractor={(item) => item.id}
-        // Prekja në listë e mbyll tastierën, por prekja e një recete e hap atë.
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
-        ListHeaderComponent={
-          <>
-            {gabimi !== null && (
-              <Text style={styles.gjendja}>Recetat nuk u ngarkuan: {gabimi}</Text>
-            )}
-            <Text style={styles.koka}>Receta të rekomanduara nga frigoriferi yt</Text>
-          </>
-        }
-        // Lista bosh pa gabim zakonisht do të thotë se tabelës i mungon policy për lexim.
-        ListEmptyComponent={
-          gabimi === null ? <Text style={styles.gjendja}>{"S'ka receta."}</Text> : undefined
-        }
-        renderItem={({ item }) => (
-          // Kartela përmban View, prandaj Link-u e kalon lidhjen te Pressable me asChild.
-          <Link href={`/artikull/${item.id}`} asChild>
-            <Pressable style={styles.rreshti}>
-              <Kartela titulli={item.titulli} teksti={`${item.koha_minuta} min`} />
-            </Pressable>
-          </Link>
-        )}
-      />
-      {/* Forma është jashtë listës, që prekjet në fusha të mos i marrë scroll-i. */}
-      <FormaRecete onShtuar={ngarkoRecetat} />
-    </KeyboardAvoidingView>
+    <FlatList
+      // Në iOS lista kalon nën header dhe nën tab-et, por fillon e mbaron jashtë tyre.
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={styles.permbajtja}
+      data={recetat}
+      // Çelësi është id-ja e recetës (jo indeksi), që çdo rresht të mbajë gjendjen e vet.
+      keyExtractor={(item) => item.id}
+      ListHeaderComponent={
+        <View style={styles.koka}>
+          <Butoni
+            lloji="dytesor"
+            titulli="+ Shto një recetë"
+            onPress={() => router.push("/shto")}
+          />
+          {gabimi !== null && (
+            <Teksti lloji="dytesor" ngjyra="gabimi" accessibilityRole="alert">
+              Recetat nuk u ngarkuan: {gabimi}
+            </Teksti>
+          )}
+        </View>
+      }
+      ListEmptyComponent={
+        dukeNgarkuar ? (
+          <ActivityIndicator style={styles.gjendja} size="large" color={ngjyrat.primare} />
+        ) : gabimi === null ? (
+          // Lista bosh pa gabim zakonisht do të thotë se tabelës i mungon policy për lexim.
+          <Teksti ngjyra="tekstiDytesor" style={styles.gjendja}>
+            {"S'ka receta."}
+          </Teksti>
+        ) : undefined
+      }
+      renderItem={({ item }) => (
+        // Kartela përmban View, prandaj Link-u e kalon lidhjen te Pressable me asChild.
+        <Link href={`/artikull/${item.id}`} asChild>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`${item.titulli}, ${item.koha_minuta} minuta`}
+            style={({ pressed }) => pressed && styles.eShtypur}
+          >
+            <Kartela titulli={item.titulli} teksti={`${item.koha_minuta} min`} />
+          </Pressable>
+        </Link>
+      )}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  faqja: { flex: 1 },
-  rreshti: { padding: 16 },
-  koka: {
-    fontSize: 16,
-    fontWeight: "bold",
-    paddingHorizontal: 16,
-    paddingTop: 16,
+  // Në ekrane të gjera lista rri në mes dhe nuk zgjerohet pa fund.
+  permbajtja: {
+    alignSelf: "center",
+    gap: hapesira.m,
+    maxWidth: permasat.gjeresiaMaksimale,
+    padding: hapesira.xl,
+    width: "100%",
   },
-  gjendja: { padding: 16 },
+  koka: { gap: hapesira.m, marginBottom: hapesira.xs },
+  gjendja: { paddingVertical: hapesira.xxxl, textAlign: "center" },
+  eShtypur: { opacity: 0.6 },
 });

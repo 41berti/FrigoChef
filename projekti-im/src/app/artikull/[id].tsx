@@ -1,7 +1,9 @@
 import { useLocalSearchParams } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
+import Teksti from "@/components/Teksti";
 import { gjeArtikullin } from "@/data/artikujt";
+import { hapesira, permasat } from "@/tema/tema";
 
 export default function Detajet() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -9,27 +11,44 @@ export default function Detajet() {
 
   // Kontrolli (guard): pa të, TypeScript jep TS18048 ('artikulli' is possibly 'undefined').
   if (!artikulli) {
-    return <Text style={styles.ekrani}>Artikulli “{id}” nuk u gjet.</Text>;
+    return (
+      <View style={styles.permbajtja}>
+        <Teksti ngjyra="tekstiDytesor">Artikulli “{id}” nuk u gjet.</Teksti>
+      </View>
+    );
   }
 
   return (
-    <View style={styles.ekrani}>
-      <Text style={styles.titulli}>{artikulli.titulli}</Text>
-      <Text>Koha: {artikulli.kohaMinuta} min</Text>
+    // ScrollView, që teksti i gjatë të lexohet edhe në telefona të vegjël.
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={styles.permbajtja}
+    >
+      <Teksti lloji="titull">{artikulli.titulli}</Teksti>
+      <Teksti lloji="dytesor" ngjyra="tekstiDytesor">
+        Koha: {artikulli.kohaMinuta} min
+      </Teksti>
 
-      <Text style={styles.nentitulli}>Përbërësit</Text>
+      <Teksti lloji="nentitull" style={styles.nentitulli}>
+        Përbërësit
+      </Teksti>
       {artikulli.perberesit.map((perberesi) => (
-        <Text key={perberesi}>• {perberesi}</Text>
+        <Teksti key={perberesi}>• {perberesi}</Teksti>
       ))}
 
-      <Text style={styles.pershkrimi}>{artikulli.pershkrimi}</Text>
-    </View>
+      <Teksti style={styles.pershkrimi}>{artikulli.pershkrimi}</Teksti>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  ekrani: { padding: 16 },
-  titulli: { fontSize: 22, fontWeight: "bold", marginBottom: 4 },
-  nentitulli: { fontWeight: "bold", marginTop: 16, marginBottom: 4 },
-  pershkrimi: { marginTop: 16 },
+  permbajtja: {
+    alignSelf: "center",
+    gap: hapesira.xs,
+    maxWidth: permasat.gjeresiaMaksimale,
+    padding: hapesira.xl,
+    width: "100%",
+  },
+  nentitulli: { marginTop: hapesira.xl },
+  pershkrimi: { marginTop: hapesira.xl },
 });
