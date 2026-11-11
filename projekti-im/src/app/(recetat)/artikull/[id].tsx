@@ -1,19 +1,66 @@
 import { useLocalSearchParams } from "expo-router";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 
 import Teksti from "@/components/Teksti";
-import { gjeArtikullin } from "@/data/artikujt";
-import { hapesira, permasat } from "@/tema/tema";
+import { merrReceten, type Receta } from "@/data/recetat";
+import { hapesira, permasat, useNgjyrat } from "@/tema/tema";
 
 export default function Detajet() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const artikulli = gjeArtikullin(id);
+  const [receta, setReceta] = useState<Receta | null>(null);
+  const [dukeNgarkuar, setDukeNgarkuar] = useState(true);
+  const [gabimi, setGabimi] = useState<string | null>(null);
+  const ngjyrat = useNgjyrat();
 
-  // Kontrolli (guard): pa të, TypeScript jep TS18048 ('artikulli' is possibly 'undefined').
-  if (!artikulli) {
+  // Receta kërkohet nga Supabase kur hapet ekrani, dhe prapë nëse ndryshon id-ja në URL.
+  useEffect(() => {
+    // Nëse ekrani mbyllet para se të vijë përgjigjja, nuk e prekim më gjendjen.
+    let aktiv = true;
+
+    merrReceten(id).then(({ data, error }) => {
+      if (!aktiv) {
+        return;
+      }
+      if (error) {
+        setGabimi(error.message);
+      } else {
+        setGabimi(null);
+        setReceta(data);
+      }
+      setDukeNgarkuar(false);
+    });
+
+    return () => {
+      aktiv = false;
+    };
+  }, [id]);
+
+  if (dukeNgarkuar) {
     return (
-      <View style={styles.permbajtja}>
-        <Teksti ngjyra="tekstiDytesor">Artikulli “{id}” nuk u gjet.</Teksti>
+      <View style={styles.gjendja}>
+        <ActivityIndicator size="large" color={ngjyrat.primare} />
+      </View>
+    );
+  }
+
+  if (gabimi !== null) {
+    return (
+      <View style={styles.gjendja}>
+        <Teksti ngjyra="gabimi" accessibilityRole="alert" style={styles.neMes}>
+          Receta nuk u ngarkua: {gabimi}
+        </Teksti>
+      </View>
+    );
+  }
+
+  // Kontrolli (guard): pa të, TypeScript ankohet se `receta` mund të jetë null.
+  if (!receta) {
+    return (
+      <View style={styles.gjendja}>
+        <Teksti ngjyra="tekstiDytesor" style={styles.neMes}>
+          Receta “{id}” nuk u gjet.
+        </Teksti>
       </View>
     );
   }
@@ -24,19 +71,35 @@ export default function Detajet() {
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={styles.permbajtja}
     >
-      <Teksti lloji="titull">{artikulli.titulli}</Teksti>
+      <Teksti lloji="titull">{receta.titulli}</Teksti>
       <Teksti lloji="dytesor" ngjyra="tekstiDytesor">
-        Koha: {artikulli.kohaMinuta} min
+        Koha: {receta.koha_minuta} min
       </Teksti>
 
       <Teksti lloji="nentitull" style={styles.nentitulli}>
         Përbërësit
       </Teksti>
-      {artikulli.perberesit.map((perberesi) => (
-        <Teksti key={perberesi}>• {perberesi}</Teksti>
-      ))}
+      {receta.perberesit.length === 0 ? (
+        // Recetat e shtuara para se të kishim këtë kolonë e kanë listën bosh.
+        <Teksti ngjyra="tekstiDytesor">{"Kjo recetë s'ka përbërës të shënuar."}</Teksti>
+      ) : (
+        receta.perberesit.map((perberesi, indeksi) => (
+          <Teksti key={`${indeksi}-${perberesi}`}>• {perberesi}</Teksti>
+        ))
+      )}
 
-      <Teksti style={styles.pershkrimi}>{artikulli.pershkrimi}</Teksti>
+      <Teksti lloji="nentitull" style={styles.nentitulli}>
+        Hapat
+      </Teksti>
+      {receta.hapat.length === 0 ? (
+        <Teksti ngjyra="tekstiDytesor">{"Kjo recetë s'ka hapa të shënuar."}</Teksti>
+      ) : (
+        receta.hapat.map((hapi, indeksi) => (
+          <Teksti key={`${indeksi}-${hapi}`}>
+            {indeksi + 1}. {hapi}
+          </Teksti>
+        ))
+      )}
     </ScrollView>
   );
 }
@@ -49,6 +112,8 @@ const styles = StyleSheet.create({
     padding: hapesira.xl,
     width: "100%",
   },
+  // Ngarkimi, gabimi dhe "nuk u gjet" rrinë në mes të ekranit.
+  gjendja: { flex: 1, justifyContent: "center", padding: hapesira.xl },
+  neMes: { textAlign: "center" },
   nentitulli: { marginTop: hapesira.xl },
-  pershkrimi: { marginTop: hapesira.xl },
 });
