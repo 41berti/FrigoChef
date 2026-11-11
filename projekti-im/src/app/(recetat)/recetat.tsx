@@ -74,7 +74,15 @@ export default function Recetat() {
             accessibilityLabel={`${item.titulli}, ${item.koha_minuta} minuta`}
             style={({ pressed }) => pressed && styles.eShtypur}
           >
-            <Kartela titulli={item.titulli} teksti={`${item.koha_minuta} min`} />
+            <Kartela
+              titulli={item.titulli}
+              // Numri i përbërësve del vetëm kur receta i ka të shënuar.
+              teksti={
+                item.perberesit.length > 0
+                  ? `${item.koha_minuta} min · ${item.perberesit.length} përbërës`
+                  : `${item.koha_minuta} min`
+              }
+            />
           </Pressable>
         </Link>
       )}
