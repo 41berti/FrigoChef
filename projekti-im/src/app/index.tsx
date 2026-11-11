@@ -28,21 +28,23 @@ export default function Index() {
   const lartesiaHeader = useHeaderHeight();
 
   // Thirret kur hapet ekrani dhe sa herë që forma shton një recetë.
-  async function ngarkoRecetat() {
-    const { data, error } = await supabase
+  // Gjendja ndryshon brenda .then, pra vetëm pasi të vijë përgjigjja nga Supabase.
+  function ngarkoRecetat() {
+    supabase
       .from("recetat")
       .select("id, titulli, koha_minuta")
       // Më të rejat në krye. Recetat me të njëjtën kohë renditen sipas titullit.
       .order("krijuar_me", { ascending: false })
-      .order("titulli");
-
-    if (error) {
-      setGabimi(error.message);
-    } else {
-      setGabimi(null);
-      setRecetat(data);
-    }
-    setDukeNgarkuar(false);
+      .order("titulli")
+      .then(({ data, error }) => {
+        if (error) {
+          setGabimi(error.message);
+        } else {
+          setGabimi(null);
+          setRecetat(data);
+        }
+        setDukeNgarkuar(false);
+      });
   }
 
   // Me [] në fund, ky kod ekzekutohet vetëm një herë, kur hapet ekrani.
@@ -80,7 +82,7 @@ export default function Index() {
         }
         // Lista bosh pa gabim zakonisht do të thotë se tabelës i mungon policy për lexim.
         ListEmptyComponent={
-          gabimi === null ? <Text style={styles.gjendja}>S'ka receta.</Text> : undefined
+          gabimi === null ? <Text style={styles.gjendja}>{"S'ka receta."}</Text> : undefined
         }
         renderItem={({ item }) => (
           // Kartela përmban View, prandaj Link-u e kalon lidhjen te Pressable me asChild.
