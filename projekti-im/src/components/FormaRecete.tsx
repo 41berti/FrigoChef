@@ -6,6 +6,7 @@ import Fusha from "@/components/Fusha";
 import Teksti from "@/components/Teksti";
 import { shtoReceten } from "@/data/recetat";
 import { hapesira } from "@/tema/tema";
+import { dridhjeSuksesi } from "@/veglat/dridhja";
 
 // Props: ekrani na jep funksionin që thirret pasi receta të ruhet në Supabase.
 type FormaReceteProps = {
@@ -85,6 +86,8 @@ export default function FormaRecete({ onShtuar }: FormaReceteProps) {
     setPerberesitTekst("");
     setHapatTekst("");
     Keyboard.dismiss();
+    // Dridhje e shkurtër, që përdoruesi ta ndiejë se receta u ruajt.
+    dridhjeSuksesi();
     onShtuar();
   }
 

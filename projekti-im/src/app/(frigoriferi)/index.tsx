@@ -10,6 +10,7 @@ import Teksti from "@/components/Teksti";
 import { grupetEPerberesve, perberesitEGrupeve } from "@/data/perberesit";
 import { useZgjedhja } from "@/gjendja/zgjedhja";
 import { hapesira, permasat, useNgjyrat } from "@/tema/tema";
+import { dridhjeZgjedhjeje } from "@/veglat/dridhja";
 
 // Ballina: "Çka ke në frigorifer?". Përdoruesi i zgjedh përbërësit me prekje.
 export default function Frigoriferi() {
@@ -20,6 +21,12 @@ export default function Frigoriferi() {
   const ngjyrat = useNgjyrat();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
+  // Prekja e një chip-i: dridhje e shkurtër, pastaj përbërësi zgjidhet ose hiqet.
+  function prekPerberesin(perberesi: string) {
+    dridhjeZgjedhjeje();
+    nderroPerberesin(perberesi);
+  }
 
   function shtoTjeter() {
     // Shkronja të vogla dhe pa hapësira anash, njësoj si përbërësit e recetave.
@@ -72,7 +79,7 @@ export default function Frigoriferi() {
                   key={perberesi}
                   titulli={perberesi}
                   iZgjedhur={zgjedhur.includes(perberesi)}
-                  onPress={() => nderroPerberesin(perberesi)}
+                  onPress={() => prekPerberesin(perberesi)}
                 />
               ))}
             </View>
@@ -89,7 +96,7 @@ export default function Frigoriferi() {
                 key={perberesi}
                 titulli={perberesi}
                 iZgjedhur={zgjedhur.includes(perberesi)}
-                onPress={() => nderroPerberesin(perberesi)}
+                onPress={() => prekPerberesin(perberesi)}
               />
             ))}
             {!fushaEHapur && (
