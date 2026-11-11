@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { Keyboard, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Keyboard, StyleSheet, View } from "react-native";
 
+import Butoni from "@/components/Butoni";
+import Fusha from "@/components/Fusha";
+import Teksti from "@/components/Teksti";
 import { supabase } from "@/data/supabase";
+import { hapesira } from "@/tema/tema";
 
-// Props: Ballina na jep funksionin që e rifreskon listën pasi të shtohet receta.
+// Props: ekrani na jep funksionin që thirret pasi receta të ruhet në Supabase.
 type FormaReceteProps = {
   onShtuar: () => void;
 };
@@ -14,9 +17,6 @@ export default function FormaRecete({ onShtuar }: FormaReceteProps) {
   const [koha, setKoha] = useState("");
   const [gabimi, setGabimi] = useState<string | null>(null);
   const [dukeRuajtur, setDukeRuajtur] = useState(false);
-
-  // Hapësira e sigurt poshtë, që forma të mos bjerë nën home indicator-in e iPhone-it.
-  const insets = useSafeAreaInsets();
 
   async function shtoReceten() {
     const titulliFinal = titulli.trim();
@@ -56,75 +56,36 @@ export default function FormaRecete({ onShtuar }: FormaReceteProps) {
   }
 
   return (
-    // Prekja në hapësirën e zbrazët të formës e mbyll tastierën.
-    <Pressable
-      style={[styles.forma, { paddingBottom: Math.max(insets.bottom, 12) }]}
-      onPress={Keyboard.dismiss}
-      accessible={false}
-      focusable={false}
-    >
-      <TextInput
-        style={styles.fusha}
-        placeholder="Titulli i recetës"
-        placeholderTextColor="#888888"
+    <View style={styles.forma}>
+      <Fusha
+        etiketa="Titulli i recetës"
+        placeholder="p.sh. Omëletë me perime"
         value={titulli}
         onChangeText={setTitulli}
         maxLength={100}
       />
-      <View style={styles.rreshti}>
-        <TextInput
-          style={[styles.fusha, styles.koha]}
-          placeholder="Koha në minuta"
-          placeholderTextColor="#888888"
-          value={koha}
-          onChangeText={setKoha}
-          keyboardType="number-pad"
-          maxLength={3}
-        />
-        <Pressable style={styles.buton} onPress={shtoReceten} disabled={dukeRuajtur}>
-          <Text style={styles.butonTeksti}>
-            {dukeRuajtur ? "Duke ruajtur…" : "Shto recetën"}
-          </Text>
-        </Pressable>
-      </View>
-      {gabimi !== null && <Text style={styles.gabimi}>{gabimi}</Text>}
-    </Pressable>
+      <Fusha
+        etiketa="Koha në minuta"
+        placeholder="p.sh. 15"
+        value={koha}
+        onChangeText={setKoha}
+        keyboardType="number-pad"
+        maxLength={3}
+      />
+      {gabimi !== null && (
+        <Teksti lloji="dytesor" ngjyra="gabimi" accessibilityRole="alert">
+          {gabimi}
+        </Teksti>
+      )}
+      <Butoni
+        titulli={dukeRuajtur ? "Duke ruajtur…" : "Shto recetën"}
+        onPress={shtoReceten}
+        iCaktivizuar={dukeRuajtur}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  forma: {
-    backgroundColor: "#ffffff",
-    borderTopWidth: 1,
-    borderTopColor: "#dddddd",
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    gap: 8,
-  },
-  rreshti: { flexDirection: "row", gap: 8 },
-  // 44 pt është lartësia minimale e prekjes sipas Apple-it.
-  fusha: {
-    backgroundColor: "#ffffff",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#dddddd",
-    color: "#333333",
-    minHeight: 44,
-    paddingHorizontal: 12,
-  },
-  koha: { flex: 1 },
-  buton: {
-    flex: 1,
-    backgroundColor: "#208AEF",
-    borderRadius: 8,
-    justifyContent: "center",
-    minHeight: 44,
-    paddingHorizontal: 8,
-  },
-  butonTeksti: {
-    color: "#ffffff",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  gabimi: { color: "#c0392b" },
+  forma: { gap: hapesira.l },
 });
