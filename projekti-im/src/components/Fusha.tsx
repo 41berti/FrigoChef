@@ -7,10 +7,13 @@ import { hapesira, permasat, rrezet, shkronjat, useNgjyrat } from "@/tema/tema";
 type FushaProps = TextInputProps & {
   // Teksti mbi fushë, që tregon çka shkruhet në të.
   etiketa: string;
+  // Tekst i vogël nën fushë, që shpjegon si shkruhet. Nuk është i detyrueshëm.
+  ndihma?: string;
 };
 
 // Fushë teksti me etiketë sipër. Korniza bëhet e gjelbër kur fusha është aktive.
-export default function Fusha({ etiketa, style, ...tjerat }: FushaProps) {
+// Me `multiline` fusha bëhet më e lartë dhe pranon disa rreshta.
+export default function Fusha({ etiketa, ndihma, multiline, style, ...tjerat }: FushaProps) {
   const ngjyrat = useNgjyrat();
   const [eFokusuar, setEFokusuar] = useState(false);
 
@@ -21,11 +24,14 @@ export default function Fusha({ etiketa, style, ...tjerat }: FushaProps) {
       </Teksti>
       <TextInput
         accessibilityLabel={etiketa}
+        accessibilityHint={ndihma}
+        multiline={multiline}
         placeholderTextColor={ngjyrat.tekstiIZbehte}
         onFocus={() => setEFokusuar(true)}
         onBlur={() => setEFokusuar(false)}
         style={[
           styles.fusha,
+          multiline && styles.shumeRreshta,
           {
             backgroundColor: ngjyrat.siperfaqja,
             borderColor: eFokusuar ? ngjyrat.primare : ngjyrat.kufiriIFushes,
@@ -35,6 +41,11 @@ export default function Fusha({ etiketa, style, ...tjerat }: FushaProps) {
         ]}
         {...tjerat}
       />
+      {ndihma !== undefined && (
+        <Teksti lloji="dytesor" ngjyra="tekstiDytesor">
+          {ndihma}
+        </Teksti>
+      )}
     </View>
   );
 }
@@ -49,4 +60,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: hapesira.l,
     paddingVertical: hapesira.m,
   },
+  // textAlignVertical e nis tekstin nga lart edhe në Android.
+  shumeRreshta: { minHeight: 96, textAlignVertical: "top" },
 });

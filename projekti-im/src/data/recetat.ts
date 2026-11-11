@@ -31,3 +31,11 @@ export function merrRecetat() {
 export function merrReceten(id: string) {
   return supabase.from("recetat").select(KOLONAT).eq("id", id).maybeSingle();
 }
+
+// Të dhënat që dërgon forma. Id-në dhe krijuar_me i vendos vetë Supabase.
+export type ReceteERe = Pick<Receta, "titulli" | "koha_minuta" | "perberesit" | "hapat">;
+
+// Shton një recetë. Policy "shtim publik" e refuzon nëse s'i plotëson kufijtë.
+export function shtoReceten(receta: ReceteERe) {
+  return supabase.from("recetat").insert(receta);
+}
