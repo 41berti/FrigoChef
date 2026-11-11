@@ -8,7 +8,7 @@ import Teksti from "@/components/Teksti";
 import { merrRecetat, type Receta } from "@/data/recetat";
 import { hapesira, permasat, useNgjyrat } from "@/tema/tema";
 
-export default function Index() {
+export default function Recetat() {
   const [recetat, setRecetat] = useState<Receta[]>([]);
   const [dukeNgarkuar, setDukeNgarkuar] = useState(true);
   const [gabimi, setGabimi] = useState<string | null>(null);
