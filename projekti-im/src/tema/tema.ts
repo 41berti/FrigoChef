@@ -95,6 +95,8 @@ export const shkronjat = {
   trupiITheksuar: { fontSize: 17, lineHeight: 24, fontWeight: "600" },
   dytesor: { fontSize: 15, lineHeight: 20, fontWeight: "400" },
   dytesorITheksuar: { fontSize: 15, lineHeight: 20, fontWeight: "700" },
+  // Teksti i etiketave të vogla, si "deri 20 min" dhe "mungon".
+  imet: { fontSize: 13, lineHeight: 18, fontWeight: "700" },
   etiketa: {
     fontSize: 13,
     lineHeight: 18,

@@ -141,10 +141,10 @@ export default function Frigoriferi() {
               {zgjedhur.length === 1 ? " përbërës i zgjedhur" : " përbërës të zgjedhur"}
             </Teksti>
           )}
-          {/* Lista me përputhje vjen në hapin tjetër. Deri atëherë butoni hap të gjitha recetat. */}
+          {/* /lista është në të njëjtin tab, prandaj hapet mbi Ballinën, me butonin "prapa". */}
           <Butoni
             titulli="Shiko recetat  →"
-            onPress={() => router.navigate("/recetat")}
+            onPress={() => router.push("/lista")}
             iCaktivizuar={zgjedhur.length === 0}
           />
         </View>
