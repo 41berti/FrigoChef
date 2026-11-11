@@ -39,3 +39,17 @@ export type ReceteERe = Pick<Receta, "titulli" | "koha_minuta" | "perberesit" | 
 export function shtoReceten(receta: ReceteERe) {
   return supabase.from("recetat").insert(receta);
 }
+
+// Recetat bazë të aplikacionit. Policy "fshirje publike" në Supabase nuk e lejon
+// fshirjen e tyre, prandaj as aplikacioni nuk e tregon butonin e fshirjes për to.
+const RECETAT_BAZE = ["1", "2", "3", "4", "5", "6", "7", "8"];
+
+export function eshteReceteBaze(id: string): boolean {
+  return RECETAT_BAZE.includes(id);
+}
+
+// Fshin një recetë. select("id") i kthen rreshtat që u fshinë vërtet.
+// Kur policy e refuzon fshirjen, Supabase nuk jep gabim, por kthen listë bosh.
+export function fshiReceten(id: string) {
+  return supabase.from("recetat").delete().eq("id", id).select("id");
+}

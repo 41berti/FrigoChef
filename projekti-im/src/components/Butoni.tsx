@@ -7,7 +7,8 @@ type ButoniProps = {
   titulli: string;
   onPress: () => void;
   // "primar": i gjelbër dhe i mbushur. "dytesor": vetëm kornizë me vija. "tekst": vetëm tekst.
-  lloji?: "primar" | "dytesor" | "tekst";
+  // "rrezik": i kuq, për veprime që s'kthehen prapa, si fshirja.
+  lloji?: "primar" | "dytesor" | "tekst" | "rrezik";
   // Kur është true, butoni nuk shtypet (p.sh. derisa po ruhet receta).
   iCaktivizuar?: boolean;
 };
@@ -32,12 +33,15 @@ export default function Butoni({
         styles.buton,
         lloji === "primar" && { backgroundColor: ngjyrat.primare },
         lloji === "dytesor" && [styles.meKornize, { borderColor: ngjyrat.kufiriIFushes }],
+        lloji === "rrezik" && [styles.meKornizeTePlote, { borderColor: ngjyrat.gabimi }],
         (pressed || iCaktivizuar) && styles.iZbehte,
       ]}
     >
       <Teksti
         lloji="trupiITheksuar"
-        ngjyra={lloji === "primar" ? "mbiPrimare" : "primareTeksti"}
+        ngjyra={
+          lloji === "primar" ? "mbiPrimare" : lloji === "rrezik" ? "gabimi" : "primareTeksti"
+        }
         style={styles.teksti}
       >
         {titulli}
@@ -56,6 +60,7 @@ const styles = StyleSheet.create({
     paddingVertical: hapesira.m,
   },
   meKornize: { borderStyle: "dashed", borderWidth: 1.5 },
+  meKornizeTePlote: { borderWidth: 1.5 },
   iZbehte: { opacity: 0.6 },
   teksti: { fontWeight: "700", textAlign: "center" },
 });

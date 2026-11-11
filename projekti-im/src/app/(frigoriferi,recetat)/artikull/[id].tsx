@@ -1,13 +1,16 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
+  Platform,
   ScrollView,
   StyleSheet,
   useWindowDimensions,
   View,
 } from "react-native";
 
+import Butoni from "@/components/Butoni";
 import Etiketa from "@/components/Etiketa";
 import Hapi from "@/components/Hapi";
 import Ikona from "@/components/Ikona";
@@ -15,7 +18,7 @@ import RreshtPerberesi from "@/components/RreshtPerberesi";
 import Teksti from "@/components/Teksti";
 import VendiIFotos from "@/components/VendiIFotos";
 import { ndajPerberesit } from "@/data/perputhja";
-import { merrReceten, type Receta } from "@/data/recetat";
+import { eshteReceteBaze, fshiReceten, merrReceten, type Receta } from "@/data/recetat";
 import { useZgjedhja } from "@/gjendja/zgjedhja";
 import { hapesira, permasat, useNgjyrat } from "@/tema/tema";
 
@@ -26,8 +29,11 @@ export default function Detajet() {
   const [receta, setReceta] = useState<Receta | null>(null);
   const [dukeNgarkuar, setDukeNgarkuar] = useState(true);
   const [gabimi, setGabimi] = useState<string | null>(null);
+  const [dukeFshire, setDukeFshire] = useState(false);
+  const [gabimiIFshirjes, setGabimiIFshirjes] = useState<string | null>(null);
   const { zgjedhur } = useZgjedhja();
   const ngjyrat = useNgjyrat();
+  const router = useRouter();
   // Gjerësia e ekranit ndryshon kur telefoni rrotullohet ose në tablet.
   const { width } = useWindowDimensions();
 
@@ -53,6 +59,47 @@ export default function Detajet() {
       aktiv = false;
     };
   }, [id]);
+
+  // E fshin recetën në Supabase. Thirret vetëm pasi përdoruesi ta konfirmojë.
+  function fshije() {
+    setGabimiIFshirjes(null);
+    setDukeFshire(true);
+
+    fshiReceten(id).then(({ data, error }) => {
+      setDukeFshire(false);
+
+      if (error) {
+        setGabimiIFshirjes(error.message);
+        return;
+      }
+      // Lista bosh do të thotë se asnjë rresht s'u fshi: policy në Supabase nuk e lejoi.
+      if (data.length === 0) {
+        setGabimiIFshirjes("Kjo recetë nuk mund të fshihet.");
+        return;
+      }
+      // Ekrani mbyllet, dhe lista rifreskohet vetë kur del prapë në pah.
+      router.back();
+    });
+  }
+
+  // Fshirja s'kthehet prapa, prandaj së pari pyesim.
+  function pyetPerFshirje(titulli: string) {
+    const mesazhi = `“${titulli}” fshihet përgjithmonë.`;
+
+    // Alert.alert nuk punon në web, prandaj atje përdoret dritarja e shfletuesit.
+    if (Platform.OS === "web") {
+      if (window.confirm(`Të fshihet receta? ${mesazhi}`)) {
+        fshije();
+      }
+      return;
+    }
+
+    Alert.alert("Të fshihet receta?", mesazhi, [
+      { text: "Anulo", style: "cancel" },
+      // style: "destructive" e bën butonin të kuq në iOS.
+      { text: "Fshi", style: "destructive", onPress: fshije },
+    ]);
+  }
 
   if (dukeNgarkuar) {
     return (
@@ -160,6 +207,28 @@ export default function Detajet() {
           </View>
         )}
       </View>
+
+      {/* Recetat bazë "1"–"8" nuk fshihen, prandaj për to butoni nuk shfaqet fare. */}
+      {!eshteReceteBaze(receta.id) && (
+        <View style={styles.pjesa}>
+          <Butoni
+            lloji="rrezik"
+            titulli={dukeFshire ? "Duke fshirë…" : "Fshi recetën"}
+            onPress={() => pyetPerFshirje(receta.titulli)}
+            iCaktivizuar={dukeFshire}
+          />
+          {gabimiIFshirjes !== null && (
+            <Teksti
+              lloji="dytesor"
+              ngjyra="gabimi"
+              accessibilityRole="alert"
+              style={styles.neMes}
+            >
+              Receta nuk u fshi: {gabimiIFshirjes}
+            </Teksti>
+          )}
+        </View>
+      )}
     </ScrollView>
   );
 }

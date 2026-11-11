@@ -19,7 +19,8 @@ Problemi, nga 3 bisedat te `BISEDAT.md`: studenti ka ushqim në frigorifer, por 
 ### Të dhënat
 
 - **Supabase, tabela `recetat`:** `id`, `titulli`, `koha_minuta`, `perberesit text[]`, `hapat text[]`, `foto_url`, `krijuar_me`. SQL-ja është te `supabase/`. Çdo ndryshim i skemës i tregohet Albertit dhe pret "po".
-- `src/data/recetat.ts`: `merrRecetat()`, `merrReceten(id)` dhe `shtoReceten()`. Ekranet nuk e thërrasin `supabase` drejt.
+- **RLS për `anon`:** lexon të gjitha recetat, shton vetëm me 1–20 përbërës dhe më së shumti 30 hapa, dhe fshin vetëm recetat që s'janë bazë ("1"–"8"). Ende s'ka login.
+- `src/data/recetat.ts`: `merrRecetat()`, `merrReceten(id)`, `shtoReceten()` dhe `fshiReceten(id)`. Ekranet nuk e thërrasin `supabase` drejt.
 - `src/data/perputhja.ts`: i ndan përbërësit në "ke" dhe "mungon" dhe i rendit recetat.
 - `src/data/perberesit.ts`: grupet e chip-ave te Ballina.
 - `src/gjendja/zgjedhja.tsx`: përbërësit e zgjedhur, në një Context. Ruhen vetëm në memorie.
