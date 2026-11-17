@@ -1,5 +1,5 @@
-import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useRef, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 
 import Butoni from "@/components/Butoni";
@@ -48,7 +48,15 @@ export default function FormaLlogarie({ regjistrim = false }: { regjistrim?: boo
     }
   }
 
-  if (sesioni && !dukeDerguar) return <Redirect href={pas === "shto" ? "/shto" : "/llogaria"} />;
+  useFocusEffect(
+    useCallback(() => {
+      if (!sesioni || dukeDerguar) return;
+      if (pas === "shto") router.replace("/shto");
+      else router.dismissTo("/llogaria");
+    }, [sesioni, dukeDerguar, pas, router]),
+  );
+
+  if (sesioni && !dukeDerguar) return null;
 
   return (
     <ScrollView
@@ -150,7 +158,7 @@ export default function FormaLlogarie({ regjistrim = false }: { regjistrim?: boo
         lloji="tekst"
         titulli="Vazhdo me recetat"
         iCaktivizuar={dukeDerguar}
-        onPress={() => router.replace("/(recetat)/recetat")}
+        onPress={() => router.dismissTo("/recetat")}
       />
     </ScrollView>
   );

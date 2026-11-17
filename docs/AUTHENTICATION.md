@@ -1,7 +1,7 @@
 # Authentication — Issue #22
 
 Status: implementation for review; SQL **not applied**. Do not merge until Albert
-approves the migration and the pending device/database checks pass. Settings #21
+reviews the PR and the pending device/database checks pass. Settings #21
 has not been implemented.
 
 ## Flow and file responsibilities
@@ -33,7 +33,7 @@ has not been implemented.
    all listeners are removed on cleanup. Supabase handles web visibility itself.
 6. `src/app/_layout.tsx` waits for restoration before mounting navigation. A failed
    restore shows an error and retry. The existing two native bottom tabs remain.
-   Both stacks expose Llogaria, Kyçu and Regjistrohu through shared group routes.
+   Both headers open Llogaria in the Recipes stack, which also owns Kyçu and Regjistrohu.
    The account page shows email and logout, or login/registration for guests.
    Logout uses `scope: local`: this device signs out; other devices remain signed in.
 7. `src/app/(recetat)/shto.tsx` rejects guest deep links. The login return target is
@@ -44,7 +44,7 @@ has not been implemented.
    owner. The detail screen shows delete only to the owner of a non-base recipe.
    These client checks improve the interface; database RLS is the security boundary.
 
-## SQL approval required
+## Pending ownership migration
 
 Review the complete SQL in
 [`20261117171520_recipe_ownership_auth.sql`](../projekti-im/supabase/migrations/20261117171520_recipe_ownership_auth.sql).
@@ -52,7 +52,7 @@ Review the complete SQL in
 Live inspection found 14 recipes, all eight base recipes, RLS enabled, no owner
 column, and three policies limited to `anon`: public SELECT, bounded INSERT and
 DELETE of non-base recipes. Broad grants also included TRUNCATE, which bypasses RLS.
-The security advisor returned no lints; that does not make these write policies safe.
+At the initial schema review the security advisor returned no lints; that does not make these write policies safe.
 
 The proposed transaction:
 
@@ -75,12 +75,13 @@ The proposed transaction:
 policies; signing in cannot read recipes under the current anon-only SELECT policy,
 and authenticated creation cannot work without the owner column/new policies. Guest
 browsing works before migration because the read query tolerates the absent owner
-column. There is no anonymous write fallback in the new code. Keep this PR a draft.
+column. There is no anonymous write fallback in the new code. Recipe ownership and role enforcement still require database verification.
 
 The SQL is based on the inspected live schema, not a fresh-database bootstrap. Prior
 SQL files are historical setup scripts, not an existing Supabase migration chain.
-After explicit approval, apply **only this file**, in one transaction, to the
-existing project. Do not blindly run all historical setup scripts or `db reset`.
+In a database task, Codex reviews the current schema, dependencies and risk, applies
+**only this migration** through authorized tools, and verifies the results. High-risk
+production or destructive operations require explicit approval. Do not blindly run all historical setup scripts or `db reset`.
 
 ## Verification
 
@@ -112,7 +113,7 @@ session restoration was claimed from these browser checks.
 The tests use no secrets, real emails, new accounts or database writes. Historical
 coursework and `DemoGjendja.tsx` remain untouched.
 
-### Pending checks after SQL approval
+### Device and database checks
 
 Use Expo Go on Albert's iPhone; no iOS runtime was available on this Windows host.
 
@@ -138,6 +139,28 @@ Use Expo Go on Albert's iPhone; no iOS runtime was available on this Windows hos
 7. Check airplane-mode failures during login, restore, save and logout; preserve
    drafts and provide a retry. Record actual outcomes before marking the PR ready.
 
+## Account navigation review
+
+Albert verified live registration, login, logout and profile details on his iPhone before the navigation fix. The recording starts in Frigoriferi. The form replaced itself with a signed-in Account while the original Account stayed underneath. Both copies reflected the same session, so the first Back tap still showed the profile.
+
+Account and both forms now belong to the Recipes stack, anchored at its list. The two headers open that same Account. When entering from the other tab, the header clears any previous Recipes detail or form above the list. On successful authentication the focused form dismisses to Account, or replaces itself with the editor for the guest Add flow. Logging out updates the current screen in place.
+
+The browser regression suite drives the app's header Back button and the real router, with synthetic Auth and recipe responses. Its ten cases cover both tabs, a background detail, repeated visits, logout, both registration modes, direct links, Add and cancellation. Check the native iOS Back button and swipe in Expo Go after restarting Metro with the new route tree.
+
+To repeat the browser suite on Windows with Chrome installed, start the isolated server from `projekti-im` in Git Bash:
+
+```bash
+EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54399 EXPO_PUBLIC_SUPABASE_KEY=test-publishable-key npx expo start --localhost --port 8097
+```
+
+In a second Git Bash terminal in the same folder, run:
+
+```bash
+driver_dir="$(mktemp -d)"
+npm install --prefix "$driver_dir" --no-save --no-audit --no-fund playwright-core@1.65.1
+NODE_PATH="$(cygpath -w "$driver_dir/node_modules")" node --test tests/account-navigation.browser.cjs
+```
+
 ## Follow-up planning only
 
 For #21, after Albert merges #22 and explicitly says to continue: start a new branch
@@ -145,10 +168,9 @@ from updated main; add a persisted theme preference (`Sistemi`, `E çelët`,
 `E errët`); make `useNgjyrat`, navigation themes, headers, tabs and StatusBar use the
 same resolved preference; add a dedicated Cilësimet screen reachable from Llogaria.
 Reuse the guest/account states and logout. Choose the minimum compatible preference
-storage then, and test immediate updates and persistence. No settings code is in #22.
+storage then, centralize Shqip/English translations throughout the app, and test both language and System/Light/Dark appearance preferences across restart. Future UI work should improve transitions, button feedback, loading, accessibility and responsiveness while keeping interactions simple. No settings code is in #22.
 
-Active workflow docs still refer to a two-person team, week-number branch names and
-lecture pacing. [Issue #29](https://github.com/41berti/FrigoChef/issues/29) tracks
+Some contributor docs still reference the historical team and lecture schedule. [Issue #29](https://github.com/41berti/FrigoChef/issues/29) tracks
 a separate documentation-only cleanup; preserve historical
 submissions and progress reports. Albert is the sole owner/developer and the only
 reviewer/merger. This supersedes the old pacing/team instructions.

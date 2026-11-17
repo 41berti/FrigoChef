@@ -25,9 +25,6 @@ export default function FrigoriferiLayout() {
       />
       {/* Fajlli i detajeve është te dosja (frigoriferi,recetat), pra ekziston në të dy tab-et. */}
       <Stack.Screen name="artikull/[id]" options={{ title: "Detajet" }} />
-      <Stack.Screen name="llogaria" options={{ title: "Llogaria" }} />
-      <Stack.Screen name="kycu" options={{ title: "Kyçu" }} />
-      <Stack.Screen name="regjistrohu" options={{ title: "Regjistrohu" }} />
     </Stack>
   );
 }

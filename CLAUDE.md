@@ -1,19 +1,19 @@
 # CLAUDE.md · FrigoChef
 
-Këto rregulla vlejnë për çdo sesion të Claude Code-it në këtë repo, te Alberti dhe te Arianiti.
+Këto rregulla vlejnë për zhvillimin e FrigoChef.
 
 ## Projekti
 
 - Aplikacioni: Expo Router + TypeScript (Expo SDK 58) në `projekti-im/`. Para se të prekësh kodin, lexo `projekti-im/AGENTS.md`.
 - Komandat `npx` dhe `npm` ekzekutohen brenda `projekti-im/`.
 - Në rrënjë janë fajllat e vlerësuar: `EKIPI.md`, `BISEDAT.md`, `HARTA.md`, `PITCH.md` dhe `docs/skica/`.
-- Ekipi: @41berti (pronari, i vetmi që aprovon dhe bën merge) dhe @Arianitxhafa (collaborator).
+- Alberti (@41berti) është pronari i vetëm. Alberti dhe ChatGPT përcaktojnë kërkesat, arkitekturën dhe kriteret e pranimit. Codex implementon, teston, dokumenton dhe përgatit PR-në. Vetëm Alberti aprovon dhe bën squash merge.
 - Udhëzuesi hap pas hapi është te `CONTRIBUTING.md`. Rishikimi me AI është te `docs/AI-REVIEW.md`.
 
 ## Arkitektura
 
-- `main` është e vetmja degë e përhershme. Ndjek ligjëratat dhe detyrat e profesorit dhe është e mbrojtur.
-- Për çdo issue krijohet një degë e përkohshme nga `main`, me emrin `java<N>/<pershkrim-i-shkurter>`, p.sh. `java5/supabase-setup`.
+- `main` është e vetmja degë e përhershme. Është e mbrojtur.
+- Për çdo issue krijohet një degë e përkohshme nga `main`, sipas issue-s. Korrigjimet gjatë rishikimit bëhen në degën dhe PR-në ekzistuese.
 - Askush nuk ka degë të përhershme.
 
 ## Rrjedha
@@ -30,25 +30,15 @@ Edhe Alberti punon me degë dhe PR, dhe i bashkon vetë pa aprovim. Këtë e bë
 - Mos bëj kurrë push direkt te `main`, force-push, rishkrim të historisë apo merge të PR-ve.
 - Puno vetëm në degën e issue-s dhe vetëm me fajllat që lidhen me të. Nëse për punën s'ka issue, pyet.
 - Mos instalo paketa dhe mos ndrysho `package.json` pa e lejuar issue-ja.
-- Shpjegoje kodin shkurt në shqip, sepse çdo javë kemi check-off ku e shpjegojmë punën me fjalët tona.
+- Shpjego vendimet me shembuj nga kodi dhe shëno çka është testuar. Ruaj dokumentet historike të kursit.
 
 ## Siguria
 
 - `.env` nuk bëhet kurrë commit.
 - Çelësi `service_role` nuk vendoset kurrë në kod.
 
-## Procedura javore
+## Dorëzimi dhe testimi lokal
 
-Kur Alberti ngjit detyrën e javës:
-
-a) Lexo detyrën dhe ndaje në issue të vogla, të qarta, me shabllonin `.github/ISSUE_TEMPLATE/detyre.md`.
-
-b) Krijo milestone "Java N", me afatin e detyrës.
-
-c) Ndaji detyrat në mënyrë të barabartë mes @41berti dhe @Arianitxhafa, dhe shëno varësitë ("Varet nga #N").
-
-d) Shto labels `java-N` dhe `feature`, `dokumentim` ose `kerkim` sipas rastit. Krijoje `java-N` nëse mungon.
-
-e) Para se t'i krijosh, trego listën (titulli · assignee · dega · varësitë) dhe prit "po".
-
-f) Mos shpik të dhëna, biseda apo rezultate që duhet t'i mbledhim ne.
+- Lexo degën aktuale dhe gjendjen e Git-it. Jep komandat për terminalin e Albertit me dosjen e saktë, fetch, switch, pull --ff-only, instalimin kur ndryshojnë varësitë dhe nisjen e Expo. Ruaj ndryshimet lokale.
+- Për çdo detyrë jep një listë testesh për pajisjen dhe shpjego si kalohet te main pas merge-it. Raporti përfshin shkakun, rrjedhën, funksionet me fajlla e rreshta, vendimet, sigurinë, rastet kufitare, rezultatet e testeve dhe statusin e PR-së.
+- Codex inspekton skemën, policy-t, varësitë dhe rrezikun për të dhënat, versionon SQL-në, e zbaton përmes mjeteve të autorizuara dhe verifikon e dokumenton rezultatin. Kërko aprovim për veprime shkatërruese, të pakthyeshme ose me rrezik të lartë në prodhim.
