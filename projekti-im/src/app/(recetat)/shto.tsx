@@ -1,13 +1,18 @@
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { ScrollView, StyleSheet } from "react-native";
 
 import Butoni from "@/components/Butoni";
 import FormaRecete from "@/components/FormaRecete";
+import { useAutentikimi } from "@/gjendja/autentikimi";
 import { hapesira, permasat } from "@/tema/tema";
 
 // Ekrani "Recetë e re". Hapet mbi listën dhe mbyllet vetë pasi receta të ruhet.
 export default function Shto() {
   const router = useRouter();
+  const { sesioni } = useAutentikimi();
+
+  if (!sesioni)
+    return <Redirect href={{ pathname: "/kycu", params: { pas: "shto" } }} />;
 
   return (
     <ScrollView

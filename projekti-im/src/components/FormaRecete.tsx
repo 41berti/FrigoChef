@@ -48,7 +48,7 @@ export default function FormaRecete({ onShtuar }: FormaReceteProps) {
       return;
     }
 
-    // Kufijtë janë të njëjtë me policy-n "shtim publik" në Supabase.
+    // Kufijtë janë të njëjtë me policy-n e shtimit në Supabase.
     if (!Number.isInteger(kohaMinuta) || kohaMinuta < 1 || kohaMinuta > 600) {
       setGabimi("Koha duhet të jetë numër i plotë nga 1 deri në 600.");
       return;
@@ -67,18 +67,22 @@ export default function FormaRecete({ onShtuar }: FormaReceteProps) {
     setGabimi(null);
     setDukeRuajtur(true);
 
-    const { error } = await shtoReceten({
-      titulli: titulliFinal,
-      koha_minuta: kohaMinuta,
-      perberesit,
-      hapat,
-    });
-
-    setDukeRuajtur(false);
-
-    if (error) {
-      setGabimi(error.message);
+    try {
+      const { error } = await shtoReceten({
+        titulli: titulliFinal,
+        koha_minuta: kohaMinuta,
+        perberesit,
+        hapat,
+      });
+      if (error) {
+        setGabimi("Receta nuk u ruajt. Kontrollo lidhjen dhe nëse je ende i kyçur.");
+        return;
+      }
+    } catch {
+      setGabimi("Receta nuk u ruajt. Kontrollo internetin dhe provo përsëri.");
       return;
+    } finally {
+      setDukeRuajtur(false);
     }
 
     setTitulli("");

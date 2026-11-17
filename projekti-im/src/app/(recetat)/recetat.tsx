@@ -6,6 +6,7 @@ import Butoni from "@/components/Butoni";
 import Kartela from "@/components/Kartela";
 import Teksti from "@/components/Teksti";
 import { merrRecetat, type Receta } from "@/data/recetat";
+import { useAutentikimi } from "@/gjendja/autentikimi";
 import { hapesira, permasat, useNgjyrat } from "@/tema/tema";
 
 export default function Recetat() {
@@ -14,6 +15,7 @@ export default function Recetat() {
   const [gabimi, setGabimi] = useState<string | null>(null);
   const ngjyrat = useNgjyrat();
   const router = useRouter();
+  const { sesioni } = useAutentikimi();
 
   // Gjendja ndryshon brenda .then, pra vetëm pasi të vijë përgjigjja nga Supabase.
   // useCallback e mban të njëjtin funksion mes rivizatimeve, që useFocusEffect
@@ -47,7 +49,9 @@ export default function Recetat() {
           <Butoni
             lloji="dytesor"
             titulli="+ Shto një recetë"
-            onPress={() => router.push("/shto")}
+            onPress={() =>
+              router.push(sesioni ? "/shto" : { pathname: "/kycu", params: { pas: "shto" } })
+            }
           />
           {gabimi !== null && (
             <Teksti lloji="dytesor" ngjyra="gabimi" accessibilityRole="alert">
