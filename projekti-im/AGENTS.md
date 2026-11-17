@@ -14,12 +14,22 @@ Problemi, nga 3 bisedat te `BISEDAT.md`: studenti ka ushqim në frigorifer, por 
 - **Tab-i "Recetat"** (`src/app/(recetat)/`):
   - `recetat.tsx` · të gjitha recetat (`/recetat`).
   - `shto.tsx` · ekrani "Recetë e re" (`/shto`), me `FormaRecete`.
+- **Llogaria:** `llogaria.tsx`, `kycu.tsx` dhe `regjistrohu.tsx` te grupi
+  `(frigoriferi,recetat)` hapen nga të dy tab-et. `shto` kërkon sesion.
+- `src/gjendja/autentikimi.tsx`: sesioni i përbashkët, restaurimi dhe pastrimi i
+  listener-ave. `src/data/llogaria.ts`: thirrjet e Supabase Auth. Ruajtja native
+  përdor `expo-secure-store`; web-i përdor localStorage.
 - **Detajet e recetës** (`src/app/(frigoriferi,recetat)/artikull/[id].tsx`): dosja me dy emra e vendos ekranin në të dy tab-et. Tregon përbërësit (ke / mungon) dhe hapat me numra.
 
 ### Të dhënat
 
 - **Supabase, tabela `recetat`:** `id`, `titulli`, `koha_minuta`, `perberesit text[]`, `hapat text[]`, `foto_url`, `krijuar_me`. SQL-ja është te `supabase/`. Çdo ndryshim i skemës i tregohet Albertit dhe pret "po".
-- **RLS për `anon`:** lexon të gjitha recetat, shton vetëm me 1–20 përbërës dhe më së shumti 30 hapa, dhe fshin vetëm recetat që s'janë bazë ("1"–"8"). Ende s'ka login.
+- **Migrimi i #22 kërkon aprovim:** shton `pronari_id`, lexim për `anon` dhe
+  `authenticated`, shtim/fshirje vetëm nga pronari dhe pa UPDATE për klientët.
+  Recetat ekzistuese mbeten pa pronar dhe të mbrojtura. SQL-ja është te
+  `supabase/migrations/20261117171520_recipe_ownership_auth.sql`; mos e ekzekuto pa
+  aprovimin e qartë të Albertit. Para migrimit databaza ende ka policy-t e vjetra
+  anonime të shtimit/fshirjes. Shih `../docs/AUTHENTICATION.md` për kufizimet/testet.
 - `src/data/recetat.ts`: `merrRecetat()`, `merrReceten(id)`, `shtoReceten()` dhe `fshiReceten(id)`. Ekranet nuk e thërrasin `supabase` drejt.
 - `src/data/perputhja.ts`: i ndan përbërësit në "ke" dhe "mungon" dhe i rendit recetat.
 - `src/data/perberesit.ts`: grupet e chip-ave te Ballina.

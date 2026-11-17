@@ -18,7 +18,8 @@ import RreshtPerberesi from "@/components/RreshtPerberesi";
 import Teksti from "@/components/Teksti";
 import VendiIFotos from "@/components/VendiIFotos";
 import { ndajPerberesit } from "@/data/perputhja";
-import { eshteReceteBaze, fshiReceten, merrReceten, type Receta } from "@/data/recetat";
+import { fshiReceten, merrReceten, mundTeFshihet, type Receta } from "@/data/recetat";
+import { useAutentikimi } from "@/gjendja/autentikimi";
 import { useZgjedhja } from "@/gjendja/zgjedhja";
 import { hapesira, permasat, useNgjyrat } from "@/tema/tema";
 
@@ -32,6 +33,7 @@ export default function Detajet() {
   const [dukeFshire, setDukeFshire] = useState(false);
   const [gabimiIFshirjes, setGabimiIFshirjes] = useState<string | null>(null);
   const { zgjedhur } = useZgjedhja();
+  const { sesioni } = useAutentikimi();
   const ngjyrat = useNgjyrat();
   const router = useRouter();
   // Gjerësia e ekranit ndryshon kur telefoni rrotullohet ose në tablet.
@@ -65,21 +67,26 @@ export default function Detajet() {
     setGabimiIFshirjes(null);
     setDukeFshire(true);
 
-    fshiReceten(id).then(({ data, error }) => {
-      setDukeFshire(false);
+    fshiReceten(id)
+      .then(({ data, error }) => {
+        setDukeFshire(false);
 
-      if (error) {
-        setGabimiIFshirjes(error.message);
-        return;
-      }
-      // Lista bosh do të thotë se asnjë rresht s'u fshi: policy në Supabase nuk e lejoi.
-      if (data.length === 0) {
-        setGabimiIFshirjes("Kjo recetë nuk mund të fshihet.");
-        return;
-      }
-      // Ekrani mbyllet, dhe lista rifreskohet vetë kur del prapë në pah.
-      router.back();
-    });
+        if (error) {
+          setGabimiIFshirjes(error.message);
+          return;
+        }
+        // Lista bosh do të thotë se asnjë rresht s'u fshi: policy në Supabase nuk e lejoi.
+        if (data.length === 0) {
+          setGabimiIFshirjes("Kjo recetë nuk mund të fshihet.");
+          return;
+        }
+        // Ekrani mbyllet, dhe lista rifreskohet vetë kur del prapë në pah.
+        router.back();
+      })
+      .catch(() => {
+        setDukeFshire(false);
+        setGabimiIFshirjes("Kontrollo internetin dhe provo përsëri.");
+      });
   }
 
   // Fshirja s'kthehet prapa, prandaj së pari pyesim.
@@ -208,8 +215,8 @@ export default function Detajet() {
         )}
       </View>
 
-      {/* Recetat bazë "1"–"8" nuk fshihen, prandaj për to butoni nuk shfaqet fare. */}
-      {!eshteReceteBaze(receta.id) && (
+      {/* Vetëm pronari sheh fshirjen; recetat bazë dhe ato pa pronar ruhen. */}
+      {mundTeFshihet(receta, sesioni?.user.id) && (
         <View style={styles.pjesa}>
           <Butoni
             lloji="rrezik"
@@ -218,12 +225,7 @@ export default function Detajet() {
             iCaktivizuar={dukeFshire}
           />
           {gabimiIFshirjes !== null && (
-            <Teksti
-              lloji="dytesor"
-              ngjyra="gabimi"
-              accessibilityRole="alert"
-              style={styles.neMes}
-            >
+            <Teksti lloji="dytesor" ngjyra="gabimi" accessibilityRole="alert" style={styles.neMes}>
               Receta nuk u fshi: {gabimiIFshirjes}
             </Teksti>
           )}
@@ -245,7 +247,12 @@ const styles = StyleSheet.create({
   gjendja: { flex: 1, justifyContent: "center", padding: hapesira.xl },
   neMes: { textAlign: "center" },
   koka: { gap: hapesira.s },
-  rreshti: { alignItems: "center", flexDirection: "row", flexWrap: "wrap", gap: hapesira.s },
+  rreshti: {
+    alignItems: "center",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: hapesira.s,
+  },
   pjesa: { gap: hapesira.m },
   perberesit: { flexDirection: "row", flexWrap: "wrap" },
 });
