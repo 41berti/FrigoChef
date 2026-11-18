@@ -1,3 +1,4 @@
+import { usePreferencat } from "@/gjendja/preferencat";
 import { Link, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from "react-native";
@@ -12,10 +13,11 @@ import { hapesira, permasat, useNgjyrat } from "@/tema/tema";
 
 // "Recetat për ty": recetat nga Supabase që përputhen me përbërësit e zgjedhur te Ballina.
 export default function Lista() {
+  const { t } = usePreferencat();
   const { zgjedhur } = useZgjedhja();
   const [recetat, setRecetat] = useState<Receta[]>([]);
   const [dukeNgarkuar, setDukeNgarkuar] = useState(true);
-  const [gabimi, setGabimi] = useState<string | null>(null);
+  const [gabimi, setGabimi] = useState(false);
   const ngjyrat = useNgjyrat();
   const router = useRouter();
 
@@ -23,9 +25,9 @@ export default function Lista() {
   const ngarkoRecetat = useCallback(() => {
     merrRecetat().then(({ data, error }) => {
       if (error) {
-        setGabimi(error.message);
+        setGabimi(true);
       } else {
-        setGabimi(null);
+        setGabimi(false);
         setRecetat(data);
       }
       setDukeNgarkuar(false);
@@ -46,9 +48,7 @@ export default function Lista() {
       ListHeaderComponent={
         <View style={styles.koka}>
           <Teksti ngjyra="tekstiDytesor">
-            {zgjedhur.length === 1
-              ? "Me përbërësin tënd"
-              : `Me ${zgjedhur.length} përbërësit e tu`}
+            {t("matches.with", { count: zgjedhur.length })}
             {" · "}
             {/* Teksti brenda tekstit sillet si lidhje: prekja kthen te Ballina. */}
             <Teksti
@@ -57,28 +57,28 @@ export default function Lista() {
               accessibilityRole="link"
               onPress={() => router.back()}
             >
-              Ndrysho
+              {t("matches.change")}
             </Teksti>
           </Teksti>
           <Teksti lloji="dytesor" ngjyra="tekstiDytesor">
-            Renditur sipas sa përbërës ke
+            {t("matches.sort")}
           </Teksti>
-          {gabimi !== null && (
+          {gabimi && (
             <Teksti lloji="dytesor" ngjyra="gabimi" accessibilityRole="alert">
-              Recetat nuk u ngarkuan: {gabimi}
+              {t("recipes.error")}
             </Teksti>
           )}
         </View>
       }
       ListEmptyComponent={
         dukeNgarkuar ? (
-          <ActivityIndicator style={styles.gjendja} size="large" color={ngjyrat.primare} />
-        ) : gabimi === null ? (
+          <ActivityIndicator accessibilityLabel={t("common.loading")} style={styles.gjendja} size="large" color={ngjyrat.primare} />
+        ) : !gabimi ? (
           <View style={styles.gjendja}>
             <Teksti ngjyra="tekstiDytesor" style={styles.neMes}>
-              Asnjë recetë nuk përputhet me përbërësit e tu.
+              {t("matches.empty")}
             </Teksti>
-            <Butoni lloji="dytesor" titulli="Ndrysho përbërësit" onPress={() => router.back()} />
+            <Butoni lloji="dytesor" titulli={t("matches.edit")} onPress={() => router.back()} />
           </View>
         ) : undefined
       }
@@ -89,9 +89,9 @@ export default function Lista() {
             accessibilityRole="button"
             // Lexuesi i ekranit e lexon gjithë kartelën si një fjali.
             accessibilityLabel={
-              `${item.receta.titulli}, ${item.receta.koha_minuta} minuta, ` +
-              `ke ${item.ke.length} nga ${item.receta.perberesit.length} përbërës, ` +
-              tekstiIMungeses(item.mungojne)
+              [item.receta.titulli, t("recipes.duration", { count: item.receta.koha_minuta }),
+                t("matches.have", { have: item.ke.length, count: item.receta.perberesit.length }),
+                tekstiIMungeses(item.mungojne, t)].join(", ")
             }
             style={({ pressed }) => pressed && styles.eShtypur}
           >

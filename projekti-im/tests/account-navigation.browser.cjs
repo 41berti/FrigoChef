@@ -1,3 +1,4 @@
+const assert = require("node:assert/strict");
 const { test } = require("node:test");
 const { chromium } = require("playwright-core");
 
@@ -48,7 +49,7 @@ async function mockSupabase(page) {
 test("one header Back from Account reaches Recipes", async t => {
   const browser = await chromium.launch({ channel: "chrome" });
   t.after(() => browser.close());
-  const page = await browser.newPage({ viewport: { width: 480, height: 850 } });
+  const page = await browser.newPage({ locale: "sq-AL", viewport: { width: 390, height: 850 } });
   const auth = await mockSupabase(page);
   const button = name => page.getByRole("button", { name, exact: true }).filter({ visible: true });
   const press = name => button(name).click();
@@ -83,6 +84,68 @@ test("one header Back from Account reaches Recipes", async t => {
     await press("Dil nga llogaria");
     await button("Regjistrohu").waitFor();
   }
+
+  await t.test("guest preferences update in place, survive restart and preserve Account back", async () => {
+    await open("/");
+    await openAccount();
+    await press("Cilësimet");
+    await at("/cilesimet");
+    const radio = name => page.getByRole("radio", { name, exact: true });
+    const theme = value => page.waitForFunction(v => document.documentElement.style.colorScheme === v, value);
+    await radio("English").click();
+    await page.getByRole("heading", { name: "Settings", exact: true }).waitFor();
+    await page.emulateMedia({ colorScheme: "light" });
+    await radio("Dark").click();
+    await theme("dark");
+    await headerBack();
+    await at("/llogaria");
+    await button("Settings").waitFor();
+    await headerBack();
+    await at("/recetat");
+    await button("+ Add a recipe").waitFor();
+    await open("/cilesimet");
+    await radio("Dark").waitFor();
+    assert.equal(await radio("Dark").getAttribute("aria-checked"), "true");
+    await theme("dark");
+    await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
+    await radio("Light").click();
+    await theme("light");
+    await radio("System").click();
+    await theme("dark");
+    await page.emulateMedia({ colorScheme: "light" });
+    await theme("light");
+    await radio("Shqip").click();
+    await page.getByRole("heading", { name: "Cilësimet", exact: true }).waitFor();
+  });
+
+  await t.test("English fridge selection matches source content and survives a visit to Settings", async () => {
+    const english = await browser.newPage({ locale: "en-US", viewport: { width: 320, height: 700 } });
+    try {
+      await mockSupabase(english);
+      await english.goto(origin);
+      const eggs = english.getByRole("checkbox", { name: "eggs", exact: true });
+      await eggs.click();
+      await english.getByText("1 ingredient selected", { exact: true }).waitFor();
+      await english.getByRole("button", { name: "Account", exact: true }).click();
+      await english.getByRole("button", { name: "Settings", exact: true }).click();
+      await english.emulateMedia({ reducedMotion: "reduce" });
+      const dark = english.getByRole("radio", { name: "Dark", exact: true });
+      await dark.click();
+      await english.waitForFunction(() => {
+        const box = document.querySelector('[role="radio"][aria-label="Dark"]')?.firstElementChild;
+        return box && getComputedStyle(box).transitionDuration === "0s";
+      });
+      await english.getByRole("tab", { name: "Fridge", exact: true }).click();
+      assert.equal(await eggs.getAttribute("aria-checked"), "true");
+      await english.getByRole("button", { name: /See recipes/ }).click();
+      await english.getByRole("link", { name: /Test recipe/ }).click();
+      await english.getByText("Vezë", { exact: true }).waitFor();
+      await english.getByText("Test step", { exact: true }).waitFor();
+      await english.getByRole("heading", { name: "Ingredients" }).waitFor();
+    } finally {
+      await english.close();
+    }
+  });
 
   await t.test("login from the refrigerator", async () => {
     await open("/");

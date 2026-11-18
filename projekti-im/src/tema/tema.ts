@@ -1,4 +1,4 @@
-import { useColorScheme } from "react-native";
+import { usePreferencat } from "@/gjendja/preferencat";
 
 // Tema e FrigoChef: ngjyrat, shkronjat, hapësirat, rrezet dhe hijet në një vend.
 // Vlerat vijnë nga skicat te docs/skica/. Ekranet s'shkruajnë ngjyra vetë, i marrin nga këtu,
@@ -17,7 +17,7 @@ export type Ngjyrat = {
   primareTeksti: string; // tekst i gjelbër mbi sfond (më i errët, që të lexohet)
   primareEZbehte: string; // sfond i gjelbër i lehtë për etiketa
   mbiPrimare: string; // teksti mbi ngjyrën primare
-  theksi: string; // "deri 20 min", "mungon"
+  theksi: string; // t("matches.quick"), "mungon"
   theksiIZbehte: string;
   gabimi: string;
 };
@@ -28,10 +28,10 @@ const ngjyratCelet: Ngjyrat = {
   mbushja: "#F1F3F5",
   teksti: "#1F2933",
   tekstiDytesor: "#6B7280",
-  tekstiIZbehte: "#9CA3AF",
+  tekstiIZbehte: "#677281",
   kufiri: "#E5E7EB",
   kufiriIFushes: "#CBD5E1",
-  primare: "#1F9D6B",
+  primare: "#177B55",
   primareTeksti: "#177F56",
   primareEZbehte: "#E3F4EC",
   mbiPrimare: "#FFFFFF",
@@ -50,7 +50,7 @@ const ngjyratErret: Ngjyrat = {
   tekstiIZbehte: "#768091",
   kufiri: "#2A313A",
   kufiriIFushes: "#3B4450",
-  primare: "#1F9D6B",
+  primare: "#177B55",
   primareTeksti: "#4CC996",
   primareEZbehte: "#143A2B",
   mbiPrimare: "#FFFFFF",
@@ -62,7 +62,7 @@ const ngjyratErret: Ngjyrat = {
 // Kthen ngjyrat sipas cilësimit të telefonit (light ose dark).
 // Kur përdoruesi e ndryshon cilësimin, ekrani vizatohet prapë me ngjyrat e reja.
 export function useNgjyrat(): Ngjyrat {
-  const skema = useColorScheme();
+  const skema = usePreferencat().tema;
   return skema === "dark" ? ngjyratErret : ngjyratCelet;
 }
 

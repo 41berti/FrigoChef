@@ -1,3 +1,4 @@
+import { usePreferencat } from "@/gjendja/preferencat";
 import { StyleSheet, View } from "react-native";
 
 import Teksti from "@/components/Teksti";
@@ -13,10 +14,11 @@ type HapiProps = {
 // Një hap i recetës: rrethi me numër majtas, teksti djathtas, si në skicën 3.
 // Vija mes rrathëve i lidh hapat njëri me tjetrin.
 export default function Hapi({ numri, teksti, iFundit }: HapiProps) {
+  const { t } = usePreferencat();
   const ngjyrat = useNgjyrat();
 
   return (
-    <View accessible accessibilityLabel={`Hapi ${numri}: ${teksti}`} style={styles.hapi}>
+    <View accessible accessibilityLabel={t("detail.step", { number: numri, text: teksti })} style={styles.hapi}>
       <View style={styles.majtas}>
         <View style={[styles.rrethi, { backgroundColor: ngjyrat.primare }]}>
           <Teksti lloji="imet" ngjyra="mbiPrimare">

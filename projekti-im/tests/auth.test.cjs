@@ -1,34 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const vm = require("node:vm");
-const ts = require("typescript");
-
-// Compile the actual TypeScript and inject only the external services. No network,
-// credentials, email delivery or database mutation is involved in this suite.
-function load(file, imports = {}) {
-  const filename = path.join(__dirname, "..", file);
-  const { outputText } = ts.transpileModule(fs.readFileSync(filename, "utf8"), {
-    compilerOptions: {
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES2022,
-      jsx: ts.JsxEmit.ReactJSX,
-    },
-  });
-  const module = { exports: {} };
-  vm.runInThisContext(`(function(require,module,exports){${outputText}\n})`, {
-    filename,
-  })(
-    (name) => {
-      if (!(name in imports)) throw new Error(`Unexpected import: ${name}`);
-      return imports[name];
-    },
-    module,
-    module.exports,
-  );
-  return module.exports;
-}
+const load = require("./load.cjs");
 
 function memoryStore() {
   const values = new Map();
@@ -135,7 +107,7 @@ test("registration validation and login keep passwords intact", async () => {
   auth.signInWithPassword = async () => ({ error: failure });
   await assert.rejects(api.kycu("a@b.com", "bad"), (error) => error === failure);
   assert.ok(!api.mesazhiIGabimit(failure).includes("private server"));
-  assert.match(api.mesazhiIGabimit({ code: "email_not_confirmed" }), /Konfirmo/);
+  assert.equal(api.mesazhiIGabimit({ code: "email_not_confirmed" }), "auth.unconfirmed");
 });
 
 test("recipe mutations deny guests, bind the verified owner and filter deletion", async () => {
@@ -200,7 +172,11 @@ test("recipe mutations deny guests, bind the verified owner and filter deletion"
 });
 
 test("existing refrigerator matching and legacy recipes remain supported", () => {
-  const api = load("src/data/perputhja.ts");
+  const ingredients = load("src/data/perberesit.ts", { "../i18n/en": load("src/i18n/en.ts") });
+  const api = load("src/data/perputhja.ts", { "@/data/perberesit": ingredients });
+  assert.deepEqual(api.ndajPerberesit(["Eggs", "Vezë", "chili"], ["vezë"]), {
+    ke: ["Eggs", "Vezë"], mungojne: ["chili"],
+  });
   const recipes = [
     { id: "legacy", perberesit: [], koha_minuta: 1 },
     { id: "complete", perberesit: ["Vezë"], koha_minuta: 10 },

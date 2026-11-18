@@ -1,3 +1,5 @@
+import { usePreferencat } from "@/gjendja/preferencat";
+import type { Celesi } from "@/i18n/perkthimi";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
@@ -9,12 +11,13 @@ import { useAutentikimi } from "@/gjendja/autentikimi";
 import { hapesira, permasat, rrezet, useNgjyrat } from "@/tema/tema";
 
 export default function Llogaria() {
+  const { t } = usePreferencat();
   const { sesioni } = useAutentikimi();
   const router = useRouter();
   const ngjyrat = useNgjyrat();
   const [dukeDale, setDukeDale] = useState(false);
   const neProces = useRef(false);
-  const [gabimi, setGabimi] = useState<string | null>(null);
+  const [gabimi, setGabimi] = useState<Celesi | null>(null);
 
   async function dil() {
     if (neProces.current) return;
@@ -38,12 +41,12 @@ export default function Llogaria() {
     >
       <View style={[styles.kartela, { backgroundColor: ngjyrat.primareEZbehte }]}>
         <Teksti lloji="titull" ngjyra="primareTeksti" accessibilityRole="header">
-          {sesioni ? "Llogaria jote" : "Gatuaj dhe ndaj recetat e tua"}
+          {sesioni ? t("account.yours") : t("account.guest")}
         </Teksti>
         <Teksti ngjyra="tekstiDytesor">
           {sesioni
-            ? "Je i kyçur në FrigoChef."
-            : "Recetat mund t’i shfletosh pa llogari. Kyçu ose regjistrohu për të shtuar recetat e tua."}
+            ? t("account.signedIn")
+            : t("account.invitation")}
         </Teksti>
         {sesioni && (
           <Teksti selectable lloji="trupiITheksuar">
@@ -53,29 +56,30 @@ export default function Llogaria() {
       </View>
       {gabimi && (
         <Teksti selectable ngjyra="gabimi" accessibilityRole="alert">
-          {gabimi}
+          {t(gabimi)}
         </Teksti>
       )}
       {sesioni ? (
         <View style={styles.veprimet}>
-          {dukeDale && <ActivityIndicator color={ngjyrat.primare} accessibilityLabel="Duke dalë" />}
+          {dukeDale && <ActivityIndicator color={ngjyrat.primare} accessibilityLabel={t("account.loggingOut")} />}
           <Butoni
             lloji="rrezik"
-            titulli={dukeDale ? "Duke dalë…" : "Dil nga llogaria"}
+            titulli={dukeDale ? t("account.loggingOut") : t("account.logout")}
             onPress={dil}
             iCaktivizuar={dukeDale}
           />
         </View>
       ) : (
         <View style={styles.veprimet}>
-          <Butoni titulli="Kyçu" onPress={() => router.push("/kycu")} />
+          <Butoni titulli={t("nav.login")} onPress={() => router.push("/kycu")} />
           <Butoni
             lloji="dytesor"
-            titulli="Regjistrohu"
+            titulli={t("nav.register")}
             onPress={() => router.push("/regjistrohu")}
           />
         </View>
       )}
+      <Butoni lloji="dytesor" titulli={t("settings.title")} onPress={() => router.push("/cilesimet")} />
     </ScrollView>
   );
 }

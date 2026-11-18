@@ -1,3 +1,4 @@
+import type { Celesi } from "@/i18n/perkthimi";
 import type { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { AppState, Platform } from "react-native";
@@ -8,7 +9,7 @@ import { supabase } from "@/data/supabase";
 type Autentikimi = {
   sesioni: Session | null;
   dukeNgarkuar: boolean;
-  gabimi: string | null;
+  gabimi: Celesi | null;
   provoPerseri: () => void;
 };
 
@@ -17,7 +18,7 @@ const Konteksti = createContext<Autentikimi | null>(null);
 export function AutentikimiProvider({ children }: { children: ReactNode }) {
   const [sesioni, setSesioni] = useState<Session | null>(null);
   const [dukeNgarkuar, setDukeNgarkuar] = useState(true);
-  const [gabimi, setGabimi] = useState<string | null>(null);
+  const [gabimi, setGabimi] = useState<Celesi | null>(null);
   const [prova, setProva] = useState(0);
 
   useEffect(() => {

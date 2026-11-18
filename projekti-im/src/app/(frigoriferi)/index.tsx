@@ -1,3 +1,4 @@
+import { usePreferencat } from "@/gjendja/preferencat";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
@@ -7,13 +8,14 @@ import Butoni from "@/components/Butoni";
 import Chip from "@/components/Chip";
 import Fusha from "@/components/Fusha";
 import Teksti from "@/components/Teksti";
-import { grupetEPerberesve, perberesitEGrupeve } from "@/data/perberesit";
+import { celesiIPerberesit, grupetEPerberesve, perberesitEGrupeve } from "@/data/perberesit";
 import { useZgjedhja } from "@/gjendja/zgjedhja";
 import { hapesira, permasat, useNgjyrat } from "@/tema/tema";
 import { dridhjeZgjedhjeje } from "@/veglat/dridhja";
 
 // Ballina: "Çka ke në frigorifer?". Përdoruesi i zgjedh përbërësit me prekje.
 export default function Frigoriferi() {
+  const { t } = usePreferencat();
   const { zgjedhur, teShtuar, nderroPerberesin, shtoPerberesin } = useZgjedhja();
   // Fusha për "+ tjetër" del vetëm pasi të preket chip-i me vija.
   const [fushaEHapur, setFushaEHapur] = useState(false);
@@ -30,10 +32,10 @@ export default function Frigoriferi() {
 
   function shtoTjeter() {
     // Shkronja të vogla dhe pa hapësira anash, njësoj si përbërësit e recetave.
-    const emri = perberesiIRi.trim().toLowerCase();
+    const emri = celesiIPerberesit(perberesiIRi);
 
     if (emri !== "") {
-      if (perberesitEGrupeve.includes(emri)) {
+      if (perberesitEGrupeve.some((p) => p === emri)) {
         // Ekziston si chip, prandaj vetëm e zgjedhim, pa e shtuar dy herë.
         if (!zgjedhur.includes(emri)) {
           nderroPerberesin(emri);
@@ -62,22 +64,22 @@ export default function Frigoriferi() {
       >
         <View style={styles.koka}>
           <Teksti lloji="titullIMadh" accessibilityRole="header">
-            Çka ke në frigorifer?
+            {t("fridge.title")}
           </Teksti>
-          <Teksti ngjyra="tekstiDytesor">Prek përbërësit që ke sot.</Teksti>
+          <Teksti ngjyra="tekstiDytesor">{t("fridge.hint")}</Teksti>
         </View>
 
         {grupetEPerberesve.map((grupi) => (
           <View key={grupi.titulli} style={styles.grupi}>
             <Teksti lloji="etiketa" ngjyra="tekstiDytesor" accessibilityRole="header">
-              {grupi.titulli}
+              {t(`pantry.${grupi.titulli}`)}
             </Teksti>
             {/* flexWrap i kalon chip-at në rresht të ri kur s'ka më vend, në çdo gjerësi ekrani. */}
             <View style={styles.chipat}>
               {grupi.perberesit.map((perberesi) => (
                 <Chip
                   key={perberesi}
-                  titulli={perberesi}
+                  titulli={t(`pantry.${perberesi}`)}
                   iZgjedhur={zgjedhur.includes(perberesi)}
                   onPress={() => prekPerberesin(perberesi)}
                 />
@@ -88,7 +90,7 @@ export default function Frigoriferi() {
 
         <View style={styles.grupi}>
           <Teksti lloji="etiketa" ngjyra="tekstiDytesor" accessibilityRole="header">
-            Të tjerë
+            {t("fridge.other")}
           </Teksti>
           <View style={styles.chipat}>
             {teShtuar.map((perberesi) => (
@@ -100,15 +102,15 @@ export default function Frigoriferi() {
               />
             ))}
             {!fushaEHapur && (
-              <Chip meVija titulli="+ tjetër" onPress={() => setFushaEHapur(true)} />
+              <Chip meVija titulli={t("fridge.more")} onPress={() => setFushaEHapur(true)} />
             )}
           </View>
           {fushaEHapur && (
             <View style={styles.shtimi}>
               <Fusha
-                etiketa="Përbërës tjetër"
-                ndihma="Shtohet vetëm në zgjedhjen tënde, jo në databazë."
-                placeholder="p.sh. proshutë"
+                etiketa={t("fridge.custom")}
+                ndihma={t("fridge.customHint")}
+                placeholder={t("fridge.example")}
                 value={perberesiIRi}
                 onChangeText={setPerberesiIRi}
                 // Butoni "done" i tastierës e shton përbërësin, njësoj si butoni poshtë.
@@ -118,7 +120,7 @@ export default function Frigoriferi() {
                 autoFocus
                 maxLength={40}
               />
-              <Butoni lloji="dytesor" titulli="Shto përbërësin" onPress={shtoTjeter} />
+              <Butoni lloji="dytesor" titulli={t("fridge.add")} onPress={shtoTjeter} />
             </View>
           )}
         </View>
@@ -138,19 +140,16 @@ export default function Frigoriferi() {
         <View style={styles.fundiBrenda}>
           {zgjedhur.length === 0 ? (
             <Teksti lloji="dytesor" ngjyra="tekstiDytesor" style={styles.neMes}>
-              Zgjidh së paku një përbërës.
+              {t("fridge.empty")}
             </Teksti>
           ) : (
             <Teksti lloji="dytesor" ngjyra="tekstiDytesor" style={styles.neMes}>
-              <Teksti lloji="dytesorITheksuar" ngjyra="primareTeksti">
-                {zgjedhur.length}
-              </Teksti>
-              {zgjedhur.length === 1 ? " përbërës i zgjedhur" : " përbërës të zgjedhur"}
+              {t("fridge.selected", { count: zgjedhur.length })}
             </Teksti>
           )}
           {/* /lista është në të njëjtin tab, prandaj hapet mbi Ballinën, me butonin "prapa". */}
           <Butoni
-            titulli="Shiko recetat  →"
+            titulli={t("fridge.show")}
             onPress={() => router.push("/lista")}
             iCaktivizuar={zgjedhur.length === 0}
           />

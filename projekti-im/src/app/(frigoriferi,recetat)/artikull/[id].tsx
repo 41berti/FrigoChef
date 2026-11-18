@@ -1,3 +1,5 @@
+import { usePreferencat } from "@/gjendja/preferencat";
+import type { Celesi } from "@/i18n/perkthimi";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -26,12 +28,13 @@ import { hapesira, permasat, useNgjyrat } from "@/tema/tema";
 // Detajet e recetës. Dosja (frigoriferi,recetat) e vendos këtë ekran në të dy tab-et,
 // prandaj hapet si nga lista me përputhje, ashtu edhe nga lista e të gjitha recetave.
 export default function Detajet() {
+  const { t } = usePreferencat();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [receta, setReceta] = useState<Receta | null>(null);
   const [dukeNgarkuar, setDukeNgarkuar] = useState(true);
-  const [gabimi, setGabimi] = useState<string | null>(null);
+  const [gabimi, setGabimi] = useState(false);
   const [dukeFshire, setDukeFshire] = useState(false);
-  const [gabimiIFshirjes, setGabimiIFshirjes] = useState<string | null>(null);
+  const [gabimiIFshirjes, setGabimiIFshirjes] = useState<Celesi | null>(null);
   const { zgjedhur } = useZgjedhja();
   const { sesioni } = useAutentikimi();
   const ngjyrat = useNgjyrat();
@@ -49,9 +52,9 @@ export default function Detajet() {
         return;
       }
       if (error) {
-        setGabimi(error.message);
+        setGabimi(true);
       } else {
-        setGabimi(null);
+        setGabimi(false);
         setReceta(data);
       }
       setDukeNgarkuar(false);
@@ -72,12 +75,12 @@ export default function Detajet() {
         setDukeFshire(false);
 
         if (error) {
-          setGabimiIFshirjes(error.message);
+          setGabimiIFshirjes("detail.denied");
           return;
         }
         // Lista bosh do të thotë se asnjë rresht s'u fshi: policy në Supabase nuk e lejoi.
         if (data.length === 0) {
-          setGabimiIFshirjes("Kjo recetë nuk mund të fshihet.");
+          setGabimiIFshirjes("detail.denied");
           return;
         }
         // Ekrani mbyllet, dhe lista rifreskohet vetë kur del prapë në pah.
@@ -85,42 +88,42 @@ export default function Detajet() {
       })
       .catch(() => {
         setDukeFshire(false);
-        setGabimiIFshirjes("Kontrollo internetin dhe provo përsëri.");
+        setGabimiIFshirjes("detail.network");
       });
   }
 
   // Fshirja s'kthehet prapa, prandaj së pari pyesim.
   function pyetPerFshirje(titulli: string) {
-    const mesazhi = `“${titulli}” fshihet përgjithmonë.`;
+    const mesazhi = t("detail.warning", { name: titulli });
 
     // Alert.alert nuk punon në web, prandaj atje përdoret dritarja e shfletuesit.
     if (Platform.OS === "web") {
-      if (window.confirm(`Të fshihet receta? ${mesazhi}`)) {
+      if (window.confirm(`${t("detail.confirm")} ${mesazhi}`)) {
         fshije();
       }
       return;
     }
 
-    Alert.alert("Të fshihet receta?", mesazhi, [
-      { text: "Anulo", style: "cancel" },
+    Alert.alert(t("detail.confirm"), mesazhi, [
+      { text: t("common.cancel"), style: "cancel" },
       // style: "destructive" e bën butonin të kuq në iOS.
-      { text: "Fshi", style: "destructive", onPress: fshije },
+      { text: t("detail.delete"), style: "destructive", onPress: fshije },
     ]);
   }
 
   if (dukeNgarkuar) {
     return (
       <View style={styles.gjendja}>
-        <ActivityIndicator size="large" color={ngjyrat.primare} />
+        <ActivityIndicator accessibilityLabel={t("common.loading")} size="large" color={ngjyrat.primare} />
       </View>
     );
   }
 
-  if (gabimi !== null) {
+  if (gabimi) {
     return (
       <View style={styles.gjendja}>
         <Teksti ngjyra="gabimi" accessibilityRole="alert" style={styles.neMes}>
-          Receta nuk u ngarkua: {gabimi}
+          {t("detail.loadError")}
         </Teksti>
       </View>
     );
@@ -131,7 +134,7 @@ export default function Detajet() {
     return (
       <View style={styles.gjendja}>
         <Teksti ngjyra="tekstiDytesor" style={styles.neMes}>
-          Receta “{id}” nuk u gjet.
+          {t("detail.notFound", { id })}
         </Teksti>
       </View>
     );
@@ -157,11 +160,11 @@ export default function Detajet() {
         </Teksti>
         <View style={styles.rreshti}>
           <Ikona emri="ora" />
-          <Teksti ngjyra="tekstiDytesor">{receta.koha_minuta} min</Teksti>
+          <Teksti ngjyra="tekstiDytesor">{t("recipes.time", { minutes: receta.koha_minuta })}</Teksti>
           {kaZgjedhje && receta.perberesit.length > 0 && (
             <Etiketa
               lloji="primare"
-              titulli={`ke ${ke.length} nga ${receta.perberesit.length} përbërës`}
+              titulli={t("matches.have", { have: ke.length, count: receta.perberesit.length })}
             />
           )}
         </View>
@@ -169,11 +172,11 @@ export default function Detajet() {
 
       <View style={styles.pjesa}>
         <Teksti lloji="nentitull" accessibilityRole="header">
-          Përbërësit
+          {t("detail.ingredients")}
         </Teksti>
         {receta.perberesit.length === 0 ? (
           // Recetat e shtuara para se të kishim këtë kolonë e kanë listën bosh.
-          <Teksti ngjyra="tekstiDytesor">{"Kjo recetë s'ka përbërës të shënuar."}</Teksti>
+          <Teksti ngjyra="tekstiDytesor">{t("detail.noIngredients")}</Teksti>
         ) : (
           <View style={styles.perberesit}>
             {kaZgjedhje
@@ -197,10 +200,10 @@ export default function Detajet() {
 
       <View style={styles.pjesa}>
         <Teksti lloji="nentitull" accessibilityRole="header">
-          Hapat
+          {t("detail.steps")}
         </Teksti>
         {receta.hapat.length === 0 ? (
-          <Teksti ngjyra="tekstiDytesor">{"Kjo recetë s'ka hapa të shënuar."}</Teksti>
+          <Teksti ngjyra="tekstiDytesor">{t("detail.noSteps")}</Teksti>
         ) : (
           <View>
             {receta.hapat.map((hapi, indeksi) => (
@@ -220,13 +223,13 @@ export default function Detajet() {
         <View style={styles.pjesa}>
           <Butoni
             lloji="rrezik"
-            titulli={dukeFshire ? "Duke fshirë…" : "Fshi recetën"}
+            titulli={dukeFshire ? t("detail.deleting") : t("detail.deleteRecipe")}
             onPress={() => pyetPerFshirje(receta.titulli)}
             iCaktivizuar={dukeFshire}
           />
           {gabimiIFshirjes !== null && (
             <Teksti lloji="dytesor" ngjyra="gabimi" accessibilityRole="alert" style={styles.neMes}>
-              Receta nuk u fshi: {gabimiIFshirjes}
+              {t(gabimiIFshirjes)}
             </Teksti>
           )}
         </View>
