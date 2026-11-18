@@ -1,3 +1,5 @@
+import { usePreferencat } from "@/gjendja/preferencat";
+import type { Celesi } from "@/i18n/perkthimi";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useRef, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
@@ -10,6 +12,7 @@ import { useAutentikimi } from "@/gjendja/autentikimi";
 import { hapesira, permasat, rrezet, useNgjyrat } from "@/tema/tema";
 
 export default function FormaLlogarie({ regjistrim = false }: { regjistrim?: boolean }) {
+  const { t } = usePreferencat();
   const { sesioni } = useAutentikimi();
   const { pas } = useLocalSearchParams<{ pas?: string }>();
   const router = useRouter();
@@ -19,7 +22,7 @@ export default function FormaLlogarie({ regjistrim = false }: { regjistrim?: boo
   const [perseritja, setPerseritja] = useState("");
   const [dukeDerguar, setDukeDerguar] = useState(false);
   const neProces = useRef(false);
-  const [gabimi, setGabimi] = useState<string | null>(null);
+  const [gabimi, setGabimi] = useState<Celesi | null>(null);
   const [konfirmimi, setKonfirmimi] = useState(false);
   // Vetëm kjo rrugë kthimi lejohet; URL-ja nuk mund të japë një redirect arbitrar.
   const parametrat = pas === "shto" ? { pas: "shto" } : {};
@@ -69,27 +72,27 @@ export default function FormaLlogarie({ regjistrim = false }: { regjistrim?: boo
       <View style={[styles.hyrja, { backgroundColor: ngjyrat.primareEZbehte }]}>
         <Teksti lloji="titull" ngjyra="primareTeksti" accessibilityRole="header">
           {konfirmimi
-            ? "Kontrollo email-in"
+            ? t("auth.check")
             : regjistrim
-              ? "Mirë se vjen në FrigoChef"
-              : "Mirë se u ktheve"}
+              ? t("auth.welcome")
+              : t("auth.welcomeBack")}
         </Teksti>
         <Teksti ngjyra="tekstiDytesor">
           {konfirmimi
-            ? "Nëse adresa mund të regjistrohet, do të marrësh një lidhje konfirmimi. Kontrollo edhe dosjen Spam. Konfirmo email-in, pastaj kthehu këtu dhe kyçu."
-            : "Shfleto recetat lirisht. Me llogari mund të shtosh edhe recetat e tua."}
+            ? t("auth.confirmHint")
+            : t("auth.browseHint")}
         </Teksti>
       </View>
       {konfirmimi ? (
         <Butoni
-          titulli="Kyçu"
+          titulli={t("nav.login")}
           onPress={() => router.replace({ pathname: "/kycu", params: parametrat })}
         />
       ) : (
         <View style={styles.forma}>
           <Fusha
-            etiketa="Email-i"
-            placeholder="emri@shembull.com"
+            etiketa={t("auth.email")}
+            placeholder={t("auth.emailExample")}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -100,8 +103,8 @@ export default function FormaLlogarie({ regjistrim = false }: { regjistrim?: boo
             editable={!dukeDerguar}
           />
           <Fusha
-            etiketa="Fjalëkalimi"
-            ndihma={regjistrim ? "Së paku 8 karaktere. Përdor një fjalëkalim unik." : undefined}
+            etiketa={t("auth.password")}
+            ndihma={regjistrim ? t("auth.passwordHint") : undefined}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -115,7 +118,7 @@ export default function FormaLlogarie({ regjistrim = false }: { regjistrim?: boo
           />
           {regjistrim && (
             <Fusha
-              etiketa="Përsërit fjalëkalimin"
+              etiketa={t("auth.repeat")}
               value={perseritja}
               onChangeText={setPerseritja}
               secureTextEntry
@@ -130,20 +133,20 @@ export default function FormaLlogarie({ regjistrim = false }: { regjistrim?: boo
           )}
           {gabimi && (
             <Teksti selectable ngjyra="gabimi" accessibilityRole="alert">
-              {gabimi}
+              {t(gabimi)}
             </Teksti>
           )}
           {dukeDerguar && (
-            <ActivityIndicator color={ngjyrat.primare} accessibilityLabel="Duke dërguar" />
+            <ActivityIndicator color={ngjyrat.primare} accessibilityLabel={t("auth.sending")} />
           )}
           <Butoni
-            titulli={dukeDerguar ? "Duke pritur…" : regjistrim ? "Regjistrohu" : "Kyçu"}
+            titulli={dukeDerguar ? t("auth.wait") : regjistrim ? t("nav.register") : t("nav.login")}
             onPress={dergo}
             iCaktivizuar={dukeDerguar}
           />
           <Butoni
             lloji="tekst"
-            titulli={regjistrim ? "Ke llogari? Kyçu" : "Nuk ke llogari? Regjistrohu"}
+            titulli={regjistrim ? t("auth.haveAccount") : t("auth.newAccount")}
             iCaktivizuar={dukeDerguar}
             onPress={() =>
               router.replace({
@@ -156,7 +159,7 @@ export default function FormaLlogarie({ regjistrim = false }: { regjistrim?: boo
       )}
       <Butoni
         lloji="tekst"
-        titulli="Vazhdo me recetat"
+        titulli={t("auth.continue")}
         iCaktivizuar={dukeDerguar}
         onPress={() => router.dismissTo("/recetat")}
       />

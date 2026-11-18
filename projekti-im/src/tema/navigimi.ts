@@ -1,5 +1,5 @@
 import { DarkTheme, DefaultTheme, type Theme } from "expo-router";
-import { useColorScheme } from "react-native";
+import { usePreferencat } from "@/gjendja/preferencat";
 
 import { useNgjyrat } from "@/tema/tema";
 
@@ -7,7 +7,7 @@ import { useNgjyrat } from "@/tema/tema";
 // Nis nga tema e gatshme e Expo Router-it dhe ia ndërron ngjyrat me tonat.
 export function useTemaENavigimit(): Theme {
   const ngjyrat = useNgjyrat();
-  const baza = useColorScheme() === "dark" ? DarkTheme : DefaultTheme;
+  const baza = usePreferencat().tema === "dark" ? DarkTheme : DefaultTheme;
 
   return {
     ...baza,

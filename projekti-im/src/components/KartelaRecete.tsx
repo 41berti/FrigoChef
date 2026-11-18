@@ -1,3 +1,4 @@
+import { usePreferencat } from "@/gjendja/preferencat";
 import { StyleSheet, View } from "react-native";
 
 import Etiketa from "@/components/Etiketa";
@@ -15,6 +16,7 @@ type KartelaReceteProps = {
 
 // Kartela e recetës te lista me përputhje, si në skicën 2.
 export default function KartelaRecete({ perputhja, ePara = false }: KartelaReceteProps) {
+  const { t } = usePreferencat();
   const ngjyrat = useNgjyrat();
   const { receta, ke, mungojne } = perputhja;
   const gjithsej = receta.perberesit.length;
@@ -38,10 +40,10 @@ export default function KartelaRecete({ perputhja, ePara = false }: KartelaRecet
         <View style={styles.rreshti}>
           <Ikona emri="ora" madhesia={16} />
           <Teksti lloji="dytesor" ngjyra="tekstiDytesor">
-            {receta.koha_minuta} min
+            {t("recipes.time", { minutes: receta.koha_minuta })}
           </Teksti>
           {/* Skica e thekson recetën që gatuhet më shpejt se sa vjen një porosi. */}
-          {receta.koha_minuta <= 20 && <Etiketa titulli="deri 20 min" />}
+          {receta.koha_minuta <= 20 && <Etiketa titulli={t("matches.quick")} />}
         </View>
 
         <View style={styles.rreshti}>
@@ -55,7 +57,7 @@ export default function KartelaRecete({ perputhja, ePara = false }: KartelaRecet
             />
           </View>
           <Teksti lloji="dytesorITheksuar" ngjyra="primareTeksti">
-            ke {ke.length} nga {gjithsej}
+            {t("matches.ratio", { have: ke.length, total: gjithsej })}
           </Teksti>
         </View>
 
@@ -64,7 +66,7 @@ export default function KartelaRecete({ perputhja, ePara = false }: KartelaRecet
           ngjyra={mungojne.length === 0 ? "primareTeksti" : "tekstiDytesor"}
           numberOfLines={1}
         >
-          {tekstiIMungeses(mungojne)}
+          {tekstiIMungeses(mungojne, t)}
         </Teksti>
       </View>
     </View>

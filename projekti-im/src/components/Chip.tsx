@@ -22,6 +22,7 @@ export default function Chip({ titulli, onPress, iZgjedhur = false, meVija = fal
       // Lexuesi i ekranit e lexon si kuti zgjedhjeje: "vezë, e zgjedhur".
       accessibilityRole={meVija ? "button" : "checkbox"}
       accessibilityState={meVija ? undefined : { checked: iZgjedhur }}
+      aria-checked={meVija ? undefined : iZgjedhur}
       accessibilityLabel={titulli}
       onPress={onPress}
       // Chip-i është pak më i ulët se 44 pt, prandaj zona e prekjes zgjerohet nga jashtë.

@@ -1,3 +1,4 @@
+import { usePreferencat } from "@/gjendja/preferencat";
 import { Stack } from "expo-router";
 
 import ButoniLlogaria from "@/components/ButoniLlogaria";
@@ -8,6 +9,7 @@ export const unstable_settings = { anchor: "index" };
 
 // Tab-i "Frigoriferi" ka Stack-un e vet: Ballina, lista me përputhje dhe detajet.
 export default function FrigoriferiLayout() {
+  const { t } = usePreferencat();
   return (
     <Stack screenOptions={{ headerShadowVisible: false }}>
       <Stack.Screen
@@ -18,13 +20,13 @@ export default function FrigoriferiLayout() {
       <Stack.Screen
         name="lista"
         options={{
-          title: "Recetat për ty",
+          title: t("nav.matches"),
           headerLargeTitle: true,
-          headerBackTitle: "Ballina",
+          headerBackTitle: t("nav.home"),
         }}
       />
       {/* Fajlli i detajeve është te dosja (frigoriferi,recetat), pra ekziston në të dy tab-et. */}
-      <Stack.Screen name="artikull/[id]" options={{ title: "Detajet" }} />
+      <Stack.Screen name="artikull/[id]" options={{ title: t("nav.details") }} />
     </Stack>
   );
 }

@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import * as SplashScreen from "expo-splash-screen";
+import { PreferencatProvider, usePreferencat } from "@/gjendja/preferencat";
 import { ThemeProvider } from "expo-router";
 import { NativeTabs } from "expo-router/native-tabs";
 import { StatusBar } from "expo-status-bar";
@@ -10,18 +13,27 @@ import { ZgjedhjaProvider } from "@/gjendja/zgjedhja";
 import { useTemaENavigimit } from "@/tema/navigimi";
 import { hapesira, useNgjyrat } from "@/tema/tema";
 
+void SplashScreen.preventAutoHideAsync().catch(() => {});
+
 export default function RootLayout() {
   return (
-    <AutentikimiProvider>
-      <Navigimi />
-    </AutentikimiProvider>
+    <PreferencatProvider>
+      <AutentikimiProvider>
+        <Navigimi />
+      </AutentikimiProvider>
+    </PreferencatProvider>
   );
 }
 
 function Navigimi() {
+  const { t } = usePreferencat();
   const tema = useTemaENavigimit();
   const ngjyrat = useNgjyrat();
   const { dukeNgarkuar, gabimi, provoPerseri } = useAutentikimi();
+
+  useEffect(() => {
+    void SplashScreen.hideAsync().catch(() => {});
+  }, []);
 
   // Asnjë redirect nuk ndodh para restaurimit të sesionit.
   if (dukeNgarkuar || gabimi) {
@@ -39,17 +51,17 @@ function Navigimi() {
           <ActivityIndicator
             size="large"
             color={ngjyrat.primare}
-            accessibilityLabel="Duke hapur FrigoChef"
+            accessibilityLabel={t("common.opening")}
           />
         ) : (
           <>
             <Teksti selectable ngjyra="gabimi" accessibilityRole="alert">
-              {gabimi}
+              {gabimi && t(gabimi)}
             </Teksti>
-            <Butoni titulli="Provo përsëri" onPress={provoPerseri} />
+            <Butoni titulli={t("common.retry")} onPress={provoPerseri} />
           </>
         )}
-        <StatusBar style="auto" />
+        <StatusBar style={tema.dark ? "light" : "dark"} />
       </View>
     );
   }
@@ -89,9 +101,9 @@ function Navigimi() {
           }}
         >
           {/* Çdo Trigger është një tab. `name` është emri i dosjes te src/app/. */}
-          <NativeTabs tintColor={ngjyrat.primare} {...ngjyratEShiritit}>
+          <NativeTabs tintColor={ngjyrat.primareTeksti} {...ngjyratEShiritit}>
             <NativeTabs.Trigger name="(frigoriferi)">
-              <NativeTabs.Trigger.Label>Frigoriferi</NativeTabs.Trigger.Label>
+              <NativeTabs.Trigger.Label>{t("nav.fridge")}</NativeTabs.Trigger.Label>
               {/* sf është ikona në iOS (SF Symbols), md është ikona në Android (Material). */}
               <NativeTabs.Trigger.Icon
                 sf={{ default: "refrigerator", selected: "refrigerator.fill" }}
@@ -99,7 +111,7 @@ function Navigimi() {
               />
             </NativeTabs.Trigger>
             <NativeTabs.Trigger name="(recetat)">
-              <NativeTabs.Trigger.Label>Recetat</NativeTabs.Trigger.Label>
+              <NativeTabs.Trigger.Label>{t("nav.recipes")}</NativeTabs.Trigger.Label>
               <NativeTabs.Trigger.Icon
                 sf={{ default: "book", selected: "book.fill" }}
                 md="menu_book"
@@ -109,7 +121,7 @@ function Navigimi() {
         </View>
       </ZgjedhjaProvider>
       {/* Ikonat e orës dhe baterisë bëhen të bardha në dark mode. */}
-      <StatusBar style="auto" />
+      <StatusBar style={tema.dark ? "light" : "dark"} />
     </ThemeProvider>
   );
 }
