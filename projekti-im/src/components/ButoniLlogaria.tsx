@@ -1,9 +1,11 @@
+import { usePreferencat } from "@/gjendja/preferencat";
 import { useNavigation, useRouter } from "expo-router";
 import { StackActions } from "expo-router/react-navigation";
 
 import Butoni from "@/components/Butoni";
 
 export default function ButoniLlogaria() {
+  const { t } = usePreferencat();
   const router = useRouter();
   const navigation = useNavigation();
 
@@ -19,7 +21,7 @@ export default function ButoniLlogaria() {
 
   return (
     <Butoni
-      titulli="Llogaria"
+      titulli={t("nav.account")}
       lloji="tekst"
       onPress={hapLlogarine}
     />

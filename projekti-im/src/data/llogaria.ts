@@ -1,3 +1,4 @@
+import type { Celesi } from "@/i18n/perkthimi";
 import { supabase } from "@/data/supabase";
 
 export async function kycu(email: string, password: string) {
@@ -27,35 +28,35 @@ export function validoLlogarine(
   password: string,
   regjistrim: boolean,
   perseritja = "",
-) {
+): Celesi | null {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
-    return "Shkruaj një adresë email-i të vlefshme.";
-  if (!password) return "Shkruaj fjalëkalimin.";
-  if (regjistrim && password.length < 8) return "Përdor së paku 8 karaktere për fjalëkalimin.";
-  if (regjistrim && password !== perseritja) return "Fjalëkalimet nuk përputhen.";
+    return "auth.invalidEmail";
+  if (!password) return "auth.needPassword";
+  if (regjistrim && password.length < 8) return "auth.shortPassword";
+  if (regjistrim && password !== perseritja) return "auth.mismatch";
   return null;
 }
 
-export function mesazhiIGabimit(error: unknown): string {
+export function mesazhiIGabimit(error: unknown): Celesi {
   const kodi = typeof error === "object" && error !== null && "code" in error ? error.code : null;
   switch (kodi) {
     case "invalid_credentials":
-      return "Email-i ose fjalëkalimi nuk është i saktë.";
+      return "auth.invalidCredentials";
     case "email_not_confirmed":
-      return "Konfirmo email-in nga lidhja që të dërguam, pastaj kyçu përsëri.";
+      return "auth.unconfirmed";
     case "user_already_exists":
-      return "Regjistrimi nuk u krye. Provo të kyçesh me këtë email.";
+      return "auth.exists";
     case "weak_password":
-      return "Zgjidh një fjalëkalim më të fortë sipas kërkesave të llogarisë.";
+      return "auth.weak";
     case "over_email_send_rate_limit":
     case "over_request_rate_limit":
-      return "Ka shumë kërkesa. Prit pak dhe provo përsëri.";
+      return "auth.rateLimit";
     case "signup_disabled":
-      return "Regjistrimi është përkohësisht i mbyllur.";
+      return "auth.disabled";
     case "session_not_found":
     case "refresh_token_not_found":
-      return "Sesioni ka përfunduar. Kyçu përsëri.";
+      return "auth.expired";
     default:
-      return "Veprimi nuk u krye. Kontrollo lidhjen me internetin dhe provo përsëri.";
+      return "auth.failed";
   }
 }

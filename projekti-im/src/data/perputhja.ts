@@ -1,3 +1,5 @@
+import type { Perkthe } from "@/i18n/perkthimi";
+import { celesiIPerberesit } from "@/data/perberesit";
 import type { Receta } from "@/data/recetat";
 
 // Sa mirë përputhet një recetë me përbërësit që ka zgjedhur përdoruesi.
@@ -12,7 +14,7 @@ export type Perputhje = {
 // I ndan përbërësit e një recete në dy lista: ata që i ke dhe ata që mungojnë.
 // Krahasimi bëhet me shkronja të vogla, që "Vezë" dhe "vezë" të jenë i njëjti përbërës.
 export function ndajPerberesit(perberesit: string[], zgjedhur: string[]) {
-  const eKa = (perberesi: string) => zgjedhur.includes(perberesi.toLowerCase());
+  const eKa = (perberesi: string) => zgjedhur.includes(celesiIPerberesit(perberesi));
 
   return {
     ke: perberesit.filter((perberesi) => eKa(perberesi)),
@@ -22,15 +24,18 @@ export function ndajPerberesit(perberesit: string[], zgjedhur: string[]) {
 
 // Teksti nën shiritin e kartelës. P.sh. "mungon: kastravec, ullinj +1":
 // dy të parët dalin me emër, të tjerët vetëm si numër.
-export function tekstiIMungeses(mungojne: string[]): string {
+export function tekstiIMungeses(mungojne: string[], t: Perkthe): string {
   if (mungojne.length === 0) {
-    return "I ke të gjithë përbërësit";
+    return t("matches.all");
   }
 
   const tePare = mungojne.slice(0, 2).join(", ");
   const tjere = mungojne.length - 2;
 
-  return tjere > 0 ? `mungon: ${tePare} +${tjere}` : `mungon: ${tePare}`;
+  return t("matches.missing", {
+    count: mungojne.length,
+    items: tjere > 0 ? `${tePare} +${tjere}` : tePare,
+  });
 }
 
 // Pjesa e përbërësve të recetës që përdoruesi i ka, nga 0 deri në 1.

@@ -1,3 +1,4 @@
+import { usePreferencat } from "@/gjendja/preferencat";
 import { Link, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from "react-native";
@@ -10,9 +11,10 @@ import { useAutentikimi } from "@/gjendja/autentikimi";
 import { hapesira, permasat, useNgjyrat } from "@/tema/tema";
 
 export default function Recetat() {
+  const { t } = usePreferencat();
   const [recetat, setRecetat] = useState<Receta[]>([]);
   const [dukeNgarkuar, setDukeNgarkuar] = useState(true);
-  const [gabimi, setGabimi] = useState<string | null>(null);
+  const [gabimi, setGabimi] = useState(false);
   const ngjyrat = useNgjyrat();
   const router = useRouter();
   const { sesioni } = useAutentikimi();
@@ -23,9 +25,9 @@ export default function Recetat() {
   const ngarkoRecetat = useCallback(() => {
     merrRecetat().then(({ data, error }) => {
       if (error) {
-        setGabimi(error.message);
+        setGabimi(true);
       } else {
-        setGabimi(null);
+        setGabimi(false);
         setRecetat(data);
       }
       setDukeNgarkuar(false);
@@ -48,25 +50,25 @@ export default function Recetat() {
         <View style={styles.koka}>
           <Butoni
             lloji="dytesor"
-            titulli="+ Shto një recetë"
+            titulli={t("recipes.add")}
             onPress={() =>
               router.push(sesioni ? "/shto" : { pathname: "/kycu", params: { pas: "shto" } })
             }
           />
-          {gabimi !== null && (
+          {gabimi && (
             <Teksti lloji="dytesor" ngjyra="gabimi" accessibilityRole="alert">
-              Recetat nuk u ngarkuan: {gabimi}
+              {t("recipes.error")}
             </Teksti>
           )}
         </View>
       }
       ListEmptyComponent={
         dukeNgarkuar ? (
-          <ActivityIndicator style={styles.gjendja} size="large" color={ngjyrat.primare} />
-        ) : gabimi === null ? (
+          <ActivityIndicator accessibilityLabel={t("common.loading")} style={styles.gjendja} size="large" color={ngjyrat.primare} />
+        ) : !gabimi ? (
           // Lista bosh pa gabim zakonisht do të thotë se tabelës i mungon policy për lexim.
           <Teksti ngjyra="tekstiDytesor" style={styles.gjendja}>
-            {"S'ka receta."}
+            {t("recipes.empty")}
           </Teksti>
         ) : undefined
       }
@@ -75,7 +77,7 @@ export default function Recetat() {
         <Link href={`/artikull/${item.id}`} asChild>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={`${item.titulli}, ${item.koha_minuta} minuta`}
+            accessibilityLabel={`${item.titulli}, ${t("recipes.duration", { count: item.koha_minuta })}`}
             style={({ pressed }) => pressed && styles.eShtypur}
           >
             <Kartela
@@ -83,8 +85,8 @@ export default function Recetat() {
               // Numri i përbërësve del vetëm kur receta i ka të shënuar.
               teksti={
                 item.perberesit.length > 0
-                  ? `${item.koha_minuta} min · ${item.perberesit.length} përbërës`
-                  : `${item.koha_minuta} min`
+                  ? `${t("recipes.time", { minutes: item.koha_minuta })} · ${t("recipes.ingredients", { count: item.perberesit.length })}`
+                  : t("recipes.time", { minutes: item.koha_minuta })
               }
             />
           </Pressable>

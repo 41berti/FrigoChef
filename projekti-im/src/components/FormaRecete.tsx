@@ -1,3 +1,5 @@
+import { usePreferencat } from "@/gjendja/preferencat";
+import type { Celesi } from "@/i18n/perkthimi";
 import { useState } from "react";
 import { Keyboard, StyleSheet, View } from "react-native";
 
@@ -23,12 +25,13 @@ function ndajTekstin(teksti: string, ndaresi: RegExp): string[] {
 }
 
 export default function FormaRecete({ onShtuar }: FormaReceteProps) {
+  const { t } = usePreferencat();
   const [titulli, setTitulli] = useState("");
   const [koha, setKoha] = useState("");
   // TextInput jep tekst, prandaj përbërësit dhe hapat ruhen si tekst deri te ruajtja.
   const [perberesitTekst, setPerberesitTekst] = useState("");
   const [hapatTekst, setHapatTekst] = useState("");
-  const [gabimi, setGabimi] = useState<string | null>(null);
+  const [gabimi, setGabimi] = useState<Celesi | null>(null);
   const [dukeRuajtur, setDukeRuajtur] = useState(false);
 
   async function ruajReceten() {
@@ -44,23 +47,23 @@ export default function FormaRecete({ onShtuar }: FormaReceteProps) {
     const hapat = ndajTekstin(hapatTekst, /\n/);
 
     if (titulliFinal === "") {
-      setGabimi("Shkruaj titullin e recetës.");
+      setGabimi("editor.needTitle");
       return;
     }
 
     // Kufijtë janë të njëjtë me policy-n e shtimit në Supabase.
     if (!Number.isInteger(kohaMinuta) || kohaMinuta < 1 || kohaMinuta > 600) {
-      setGabimi("Koha duhet të jetë numër i plotë nga 1 deri në 600.");
+      setGabimi("editor.needTime");
       return;
     }
 
     if (perberesit.length < 1 || perberesit.length > 20) {
-      setGabimi("Shkruaj nga 1 deri në 20 përbërës, të ndarë me presje.");
+      setGabimi("editor.needIngredients");
       return;
     }
 
     if (hapat.length > 30) {
-      setGabimi("Receta mund të ketë më së shumti 30 hapa.");
+      setGabimi("editor.tooManySteps");
       return;
     }
 
@@ -75,11 +78,11 @@ export default function FormaRecete({ onShtuar }: FormaReceteProps) {
         hapat,
       });
       if (error) {
-        setGabimi("Receta nuk u ruajt. Kontrollo lidhjen dhe nëse je ende i kyçur.");
+        setGabimi("editor.saveError");
         return;
       }
     } catch {
-      setGabimi("Receta nuk u ruajt. Kontrollo internetin dhe provo përsëri.");
+      setGabimi("editor.network");
       return;
     } finally {
       setDukeRuajtur(false);
@@ -98,44 +101,44 @@ export default function FormaRecete({ onShtuar }: FormaReceteProps) {
   return (
     <View style={styles.forma}>
       <Fusha
-        etiketa="Titulli i recetës"
-        placeholder="p.sh. Omëletë me perime"
+        etiketa={t("editor.title")}
+        placeholder={t("editor.titleExample")}
         value={titulli}
         onChangeText={setTitulli}
         maxLength={100}
       />
       <Fusha
-        etiketa="Koha në minuta"
-        placeholder="p.sh. 15"
+        etiketa={t("editor.time")}
+        placeholder={t("editor.timeExample")}
         value={koha}
         onChangeText={setKoha}
         keyboardType="number-pad"
         maxLength={3}
       />
       <Fusha
-        etiketa="Përbërësit"
-        ndihma="Ndaji me presje."
-        placeholder="p.sh. vezë, djathë, domate"
+        etiketa={t("detail.ingredients")}
+        ndihma={t("editor.commas")}
+        placeholder={t("editor.ingredientsExample")}
         value={perberesitTekst}
         onChangeText={setPerberesitTekst}
         autoCapitalize="none"
         multiline
       />
       <Fusha
-        etiketa="Hapat (opsionale)"
-        ndihma="Shkruaj një hap në çdo rresht."
-        placeholder="Një hap për rresht"
+        etiketa={t("editor.steps")}
+        ndihma={t("editor.stepsHint")}
+        placeholder={t("editor.stepsExample")}
         value={hapatTekst}
         onChangeText={setHapatTekst}
         multiline
       />
       {gabimi !== null && (
         <Teksti lloji="dytesor" ngjyra="gabimi" accessibilityRole="alert">
-          {gabimi}
+          {t(gabimi)}
         </Teksti>
       )}
       <Butoni
-        titulli={dukeRuajtur ? "Duke ruajtur…" : "Shto recetën"}
+        titulli={dukeRuajtur ? t("editor.saving") : t("editor.save")}
         onPress={ruajReceten}
         iCaktivizuar={dukeRuajtur}
       />

@@ -1,3 +1,4 @@
+import { usePreferencat } from "@/gjendja/preferencat";
 import { StyleSheet, View } from "react-native";
 
 import Ikona from "@/components/Ikona";
@@ -13,6 +14,7 @@ type RreshtPerberesiProps = {
 
 // Një përbërës te detajet e recetës, si në skicën 3.
 export default function RreshtPerberesi({ emri, gjendja }: RreshtPerberesiProps) {
+  const { t } = usePreferencat();
   const ngjyrat = useNgjyrat();
 
   return (
@@ -20,7 +22,7 @@ export default function RreshtPerberesi({ emri, gjendja }: RreshtPerberesiProps)
       // Lexuesi i ekranit e lexon rreshtin si një fjali: "qumësht, mungon".
       accessible
       accessibilityLabel={
-        gjendja === "ke" ? `${emri}, e ke` : gjendja === "mungon" ? `${emri}, mungon` : emri
+        gjendja === "ke" ? t("detail.available", { name: emri }) : gjendja === "mungon" ? t("detail.missingItem", { name: emri }) : emri
       }
       style={styles.rreshti}
     >
@@ -42,7 +44,7 @@ export default function RreshtPerberesi({ emri, gjendja }: RreshtPerberesiProps)
       <Teksti style={styles.emri}>{emri}</Teksti>
       {gjendja === "mungon" && (
         <Teksti lloji="imet" ngjyra="theksi">
-          mungon
+          {t("detail.missing")}
         </Teksti>
       )}
     </View>

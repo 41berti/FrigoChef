@@ -4,6 +4,9 @@ import { useNgjyrat, type Ngjyrat } from "@/tema/tema";
 
 // Çdo ikonë ka dy emra: SF Symbols për iOS dhe Material Symbols për Android dhe web.
 const ikonat = {
+  system: { ios: "iphone", android: "smartphone", web: "smartphone" },
+  light: { ios: "sun.max", android: "light_mode", web: "light_mode" },
+  dark: { ios: "moon", android: "dark_mode", web: "dark_mode" },
   po: { ios: "checkmark", android: "check", web: "check" },
   ora: { ios: "clock", android: "schedule", web: "schedule" },
   gatimi: { ios: "fork.knife", android: "restaurant", web: "restaurant" },
