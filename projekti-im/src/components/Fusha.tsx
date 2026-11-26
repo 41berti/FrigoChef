@@ -7,21 +7,29 @@ import { hapesira, permasat, rrezet, shkronjat, useNgjyrat } from "@/tema/tema";
 type FushaProps = TextInputProps & {
   // Teksti mbi fushë, që tregon çka shkruhet në të.
   etiketa: string;
+  etiketeEDukshme?: boolean;
   // Tekst i vogël nën fushë, që shpjegon si shkruhet. Nuk është i detyrueshëm.
   ndihma?: string;
 };
 
 // Fushë teksti me etiketë sipër. Korniza bëhet e gjelbër kur fusha është aktive.
 // Me `multiline` fusha bëhet më e lartë dhe pranon disa rreshta.
-export default function Fusha({ etiketa, ndihma, multiline, style, ...tjerat }: FushaProps) {
+export default function Fusha({
+  etiketa,
+  etiketeEDukshme = true,
+  ndihma,
+  multiline,
+  style,
+  ...tjerat
+}: FushaProps) {
   const ngjyrat = useNgjyrat();
   const [eFokusuar, setEFokusuar] = useState(false);
 
   return (
     <View style={styles.grupi}>
-      <Teksti lloji="dytesorITheksuar" ngjyra="tekstiDytesor">
-        {etiketa}
-      </Teksti>
+      {etiketeEDukshme && (
+        <Teksti lloji="dytesorITheksuar" ngjyra="tekstiDytesor">{etiketa}</Teksti>
+      )}
       <TextInput
         accessibilityLabel={etiketa}
         accessibilityHint={ndihma}

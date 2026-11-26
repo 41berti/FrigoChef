@@ -11,15 +11,22 @@ export type Perputhje = {
   mungojne: string[];
 };
 
-// I ndan përbërësit e një recete në dy lista: ata që i ke dhe ata që mungojnë.
-// Krahasimi bëhet me shkronja të vogla, që "Vezë" dhe "vezë" të jenë i njëjti përbërës.
-export function ndajPerberesit(perberesit: string[], zgjedhur: string[]) {
-  const eKa = (perberesi: string) => zgjedhur.includes(celesiIPerberesit(perberesi));
+function celesatEZgjedhur(zgjedhur: readonly string[]) {
+  return new Set(zgjedhur.map((p) => p.startsWith("custom:") ? p : celesiIPerberesit(p)));
+}
+
+function ndajSipasCelësave(perberesit: readonly string[], zgjedhur: ReadonlySet<string>) {
+  const eKa = (perberesi: string) => zgjedhur.has(celesiIPerberesit(perberesi));
 
   return {
     ke: perberesit.filter((perberesi) => eKa(perberesi)),
     mungojne: perberesit.filter((perberesi) => !eKa(perberesi)),
   };
+}
+
+// Rezultati përdor tekstin e recetës edhe kur përputhja bëhet me ID.
+export function ndajPerberesit(perberesit: readonly string[], zgjedhur: readonly string[]) {
+  return ndajSipasCelësave(perberesit, celesatEZgjedhur(zgjedhur));
 }
 
 // Teksti nën shiritin e kartelës. P.sh. "mungon: kastravec, ullinj +1":
@@ -46,10 +53,11 @@ function pjesaQeKe(perputhja: Perputhje): number {
 // Kthen recetat që kanë së paku një përbërës të zgjedhur, të renditura:
 // 1) së pari ato që i ke më të plota, 2) pastaj ato me më shumë përbërës që ke,
 // 3) dhe në fund ato që gatuhen më shpejt.
-export function gjejPerputhjet(recetat: Receta[], zgjedhur: string[]): Perputhje[] {
+export function gjejPerputhjet(recetat: Receta[], zgjedhur: readonly string[]): Perputhje[] {
+  const celesat = celesatEZgjedhur(zgjedhur);
   return (
     recetat
-      .map((receta) => ({ receta, ...ndajPerberesit(receta.perberesit, zgjedhur) }))
+      .map((receta) => ({ receta, ...ndajSipasCelësave(receta.perberesit, celesat) }))
       // Receta pa asnjë përbërës të zgjedhur nuk i hyn në punë përdoruesit.
       .filter((perputhja) => perputhja.ke.length > 0)
       // sort pret numër negativ kur `a` duhet të dalë para `b`.

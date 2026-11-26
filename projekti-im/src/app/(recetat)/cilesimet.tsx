@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { AccessibilityInfo, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Animated from "react-native-reanimated";
 
 import Ikona from "@/components/Ikona";
@@ -8,34 +7,7 @@ import type { Pamja } from "@/data/preferencat";
 import { usePreferencat } from "@/gjendja/preferencat";
 import { hapesira, permasat, rrezet, shkronjat, useNgjyrat } from "@/tema/tema";
 import { dridhjeZgjedhjeje } from "@/veglat/dridhja";
-
-function useKohezgjatja() {
-  const [reduktuar, setReduktuar] = useState(true);
-  useEffect(() => {
-    if (Platform.OS === "web") {
-      const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-      const ndrysho = () => setReduktuar(media.matches);
-      ndrysho();
-      media.addEventListener("change", ndrysho);
-      return () => media.removeEventListener("change", ndrysho);
-    }
-    let prit = true;
-    const sub = AccessibilityInfo.addEventListener("reduceMotionChanged", (v) => {
-      prit = false;
-      setReduktuar(v);
-    });
-    void AccessibilityInfo.isReduceMotionEnabled()
-      .then((v) => {
-        if (prit) setReduktuar(v);
-      })
-      .catch(() => {});
-    return () => {
-      prit = false;
-      sub.remove();
-    };
-  }, []);
-  return reduktuar ? 0 : 220;
-}
+import { useLevizjeReduktuar } from "@/veglat/useLevizjeReduktuar";
 
 type OpsionProps = {
   label: string;
@@ -101,7 +73,7 @@ function Opsion({ label, aktiv, onPress, ikona, ms }: OpsionProps) {
 export default function Cilesimet() {
   const { gjuha, pamja, ndrysho, t, gabimRuajtjeje } = usePreferencat();
   const n = useNgjyrat();
-  const ms = useKohezgjatja();
+  const ms = useLevizjeReduktuar() ? 0 : 220;
   return (
     <Animated.View
       style={{

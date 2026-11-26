@@ -1,37 +1,66 @@
-import en from "../i18n/en";
+import katalogu from "./katalogu-perberesve.json";
+import type { Gjuha } from "../i18n/perkthimi";
 
-// Përbërësit që dalin si chip-a te Ballina, të ndarë në grupe si në skicën 1.
-// Shkruhen me shkronja të vogla, njësoj si te kolona `perberesit` në Supabase,
-// sepse përputhja me recetat bëhet duke i krahasuar si tekst.
-export const grupetEPerberesve = [
-  {
-    titulli: "Më të zakonshmit",
-    perberesit: ["vezë", "djathë i bardhë", "domate", "speca", "qepë", "qumësht", "kos", "gjizë"],
-  },
-  {
-    titulli: "Mish dhe drithëra",
-    perberesit: ["mish pule", "oriz", "miell", "gjalpë"],
-  },
-  {
-    titulli: "Perime dhe fruta",
-    perberesit: ["karotë", "kastravec", "hudhër", "kungull i njomë", "bizele", "limon"],
-  },
+export const kategoriteEPerberesve = [
+  "meat", "dairy", "vegetables", "fruit", "grains", "herbs", "oils", "other",
 ] as const;
 
-// Të gjithë përbërësit e grupeve në një listë të vetme.
-type Perberes = (typeof grupetEPerberesve)[number]["perberesit"][number];
-export const perberesitEGrupeve = grupetEPerberesve.flatMap<Perberes>(
-  (grupi) => grupi.perberesit
-);
+export type KategoriaPerberesit = (typeof kategoriteEPerberesve)[number];
+export type Perberes = {
+  id: string;
+  category: string;
+  names: Record<Gjuha, string>;
+  aliases: Record<Gjuha, string[]>;
+  emoji: string;
+  illustration?: string;
+};
 
-// Vetëm emrat e katalogut kanë sinonime të njohura. Receta ruan tekstin e autorit.
-const sipasEmrit = new Map<string, Perberes>();
-for (const emri of perberesitEGrupeve) {
-  sipasEmrit.set(emri, emri);
-  sipasEmrit.set(en.pantry[emri], emri);
+export const perberesitEKatalogut: readonly Perberes[] = katalogu.ingredients;
+
+// Përdoret për krahasim. Emri i ruajtur në recetë dhe ai që sheh përdoruesi mbeten origjinalë.
+export function normalizoEmrin(teksti: string): string {
+  return teksti
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[\s_-]+/g, " ")
+    .trim();
 }
 
-export function celesiIPerberesit(teksti: string) {
-  const emri = teksti.trim().toLowerCase();
-  return sipasEmrit.get(emri) ?? emri;
+const sipasId = new Map(perberesitEKatalogut.map((perberesi) => [perberesi.id, perberesi]));
+const sipasEmrit = new Map<string, Perberes>();
+const indeksiIKerkimit = perberesitEKatalogut.map((perberesi) => {
+  const emrat = [
+    perberesi.id, perberesi.names.sq, perberesi.names.en,
+    ...perberesi.aliases.sq, ...perberesi.aliases.en,
+  ].map(normalizoEmrin);
+  for (const emri of emrat) sipasEmrit.set(emri, perberesi);
+  return { perberesi, emrat };
+});
+
+export function perberesiMeId(id: string): Perberes | undefined {
+  return sipasId.get(id);
+}
+
+// Recetat dhe etiketat e modeleve kërkojnë përputhje të plotë me një emër, alias ose ID.
+export function gjejPerberesin(etiketa: string): Perberes | undefined {
+  return sipasEmrit.get(normalizoEmrin(etiketa));
+}
+
+export function celesiIPerberesit(teksti: string): string {
+  return gjejPerberesin(teksti)?.id ?? `custom:${normalizoEmrin(teksti)}`;
+}
+
+// Kërkimi në UI pranon fjalë të pjesshme dhe kërkon në të dyja gjuhët njëkohësisht.
+export function kerkoPerberesit(
+  kerkimi: string,
+  kategoria?: KategoriaPerberesit,
+): Perberes[] {
+  const fjalet = normalizoEmrin(kerkimi).split(" ").filter(Boolean);
+  return indeksiIKerkimit
+    .filter(({ perberesi, emrat }) =>
+      (!kategoria || perberesi.category === kategoria)
+      && fjalet.every((fjala) => emrat.some((emri) => emri.includes(fjala)))
+    )
+    .map(({ perberesi }) => perberesi);
 }
