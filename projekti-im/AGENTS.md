@@ -1,5 +1,7 @@
 ## Projekti
 
+Para planifikimit ose implementimit të një veçorie lexo [Udhërrëfyesin e produktit](../docs/ROADMAP.md). Puno sipas miratimit të Albertit dhe përditëso statusin e fazës pas përfundimit.
+
 FrigoChef i tregon studentit, brenda një minute, çka mund të gatuajë tani me përbërësit që ka në frigorifer. Është për studentin që jeton vetëm dhe gatuan vetë. Në MVP përbërësit zgjidhen me prekje; fotoja me AI vjen më vonë.
 
 Problemi, nga 3 bisedat te `BISEDAT.md`: studenti ka ushqim në frigorifer, por nuk di çka të gatuajë me të, dhe një pjesë e ushqimit i prishet.
@@ -23,12 +25,8 @@ Problemi, nga 3 bisedat te `BISEDAT.md`: studenti ka ushqim në frigorifer, por 
 
 ### Të dhënat
 
-- **Supabase, tabela `recetat`:** `id`, `titulli`, `koha_minuta`, `perberesit text[]`, `hapat text[]`, `foto_url`, `krijuar_me`. SQL-ja është te `supabase/`. Codex kontrollon skemën dhe rrezikun, versionon migrimin, e zbaton me mjetet e autorizuara, verifikon dhe dokumenton rezultatin. Për veprime shkatërruese, të pakthyeshme ose me rrezik të lartë në prodhim kërko aprovim të qartë.
-- **Migrimi i #22 është në pritje:** shton `pronari_id`, lexim për `anon` dhe
-  `authenticated`, shtim/fshirje vetëm nga pronari dhe pa UPDATE për klientët.
-  Recetat ekzistuese mbeten pa pronar dhe të mbrojtura. SQL-ja është te
-  `supabase/migrations/20261117171520_recipe_ownership_auth.sql`. Rregullimi i navigimit nuk e zbaton migrimin. Para migrimit databaza ende ka policy-t e vjetra
-  anonime të shtimit/fshirjes. Shih `../docs/AUTHENTICATION.md` për kufizimet/testet.
+- **Supabase, tabela `recetat`** ka kolonat `id`, `titulli`, `koha_minuta`, `perberesit text[]`, `hapat text[]`, `foto_url`, `krijuar_me` dhe `pronari_id uuid`. SQL-ja është te `supabase/`. Codex kontrollon skemën dhe rrezikun, versionon migrimin, e zbaton me mjetet e autorizuara, verifikon dhe dokumenton rezultatin. Për veprime shkatërruese, të pakthyeshme ose me rrezik të lartë në prodhim kërko aprovim të qartë.
+- **Pronësia e recetave (#22)** u verifikua në skemën e projektit Supabase më 26 nëntor 2026. Vizitorët mund të lexojnë. Llogaritë e kyçura mund të shtojnë receta me pronësinë e tyre dhe të fshijnë vetëm recetat e veta jashtë recetave bazë. Klientët nuk kanë UPDATE. Për konfigurimin, historikun dhe testet shih [udhëzuesin e autentikimit](../docs/AUTHENTICATION.md#recipe-ownership-in-the-hosted-project).
 - `src/data/recetat.ts`: `merrRecetat()`, `merrReceten(id)`, `shtoReceten()` dhe `fshiReceten(id)`. Ekranet nuk e thërrasin `supabase` drejt.
 - `src/data/perputhja.ts`: i ndan përbërësit në "ke" dhe "mungon" dhe i rendit recetat.
 - `src/data/perberesit.ts`: grupet e chip-ave te Ballina.

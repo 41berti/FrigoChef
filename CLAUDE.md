@@ -8,12 +8,13 @@ Këto rregulla vlejnë për zhvillimin e FrigoChef.
 - Komandat `npx` dhe `npm` ekzekutohen brenda `projekti-im/`.
 - Në rrënjë janë fajllat e vlerësuar: `EKIPI.md`, `BISEDAT.md`, `HARTA.md`, `PITCH.md` dhe `docs/skica/`.
 - Alberti (@41berti) është pronari i vetëm. Alberti dhe ChatGPT përcaktojnë kërkesat, arkitekturën dhe kriteret e pranimit. Codex implementon, teston, dokumenton dhe përgatit PR-në. Vetëm Alberti aprovon dhe bën squash merge.
+- Para planifikimit ose implementimit të një veçorie lexo [Udhërrëfyesin e produktit](docs/ROADMAP.md). Puno sipas miratimit të Albertit dhe përditëso statusin e fazës pas përfundimit.
 - Udhëzuesi hap pas hapi është te `CONTRIBUTING.md`. Rishikimi me AI është te `docs/AI-REVIEW.md`.
 
 ## Arkitektura
 
 - `main` është e vetmja degë e përhershme. Është e mbrojtur.
-- Për çdo issue krijohet një degë e përkohshme nga `main`, sipas issue-s. Korrigjimet gjatë rishikimit bëhen në degën dhe PR-në ekzistuese.
+- Për çdo issue krijohet një degë e përkohshme me emër përshkrues nga `main` i përditësuar. Korrigjimet gjatë rishikimit bëhen në degën dhe PR-në ekzistuese.
 - Askush nuk ka degë të përhershme.
 
 ## Rrjedha

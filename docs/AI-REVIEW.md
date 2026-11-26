@@ -2,7 +2,7 @@
 
 Prompt i gatshëm për ta rishikuar një PR me Claude Code ose ChatGPT.
 
-> AI-ja vetëm këshillon. Vendimin e merr Alberti (@41berti).
+> AI-ja këshillon. Vetëm Alberti (@41berti) rishikon, aprovon dhe bën squash merge në GitHub.
 
 ## 1. Mblidh materialin
 
@@ -16,6 +16,7 @@ gh issue view M
 
 - **Claude Code:** ngjite promptin me `N` dhe `M` të zëvendësuara. Komandat i ekzekuton vetë.
 - **ChatGPT:** ngjite promptin dhe, poshtë tij, daljen e të tri komandave.
+- Për një veçori, përfshi edhe pjesën përkatëse të [udhërrëfyesit](ROADMAP.md). Kriteret e issue-s përcaktojnë punën e miratuar.
 
 ## 2. Ngjite promptin
 
@@ -33,9 +34,9 @@ Rregulla:
 Vlerëso, me këtë radhë:
 1. Kriteret: a plotësohet çdo kriter te "Gati kur…" i issue-s?
 2. Struktura dhe emërtimi: ekranet te src/app/, komponentët te src/components/, të dhënat te src/data/. Emrat ndjekin stilin shqip të projektit, si Kartela, artikujt, gjeArtikullin.
-3. Lexueshmëria: a mund ta shpjegojë autori këtë kod me fjalët e veta në check-off? A ka kod të panevojshëm apo të ndërlikuar?
+3. Lexueshmëria: a shpjegon PR-ja rrjedhën, vendimet dhe verifikimin? Për dokumentacion kontrollo saktësinë, lidhjet dhe përputhjen me implementimin.
 4. Gabimet dhe rastet kufitare: id i pavlefshëm, listë bosh, mungesë interneti, gjendje ngarkimi dhe gjendje gabimi.
-5. Siguria: çelësi anon i Supabase-it në EXPO_PUBLIC_* është në rregull, sepse mbrojtjen e bën RLS-ja, prandaj kontrollo që tabelat e reja e kanë aktive. Çelësi service_role nuk lejohet kurrë. Fajlli .env nuk bëhet kurrë commit.
+5. Siguria: në EXPO_PUBLIC_* përdoret vetëm çelësi publishable ose çelësi publik legacy anon. Për tabelat e ekspozuara kontrollo grantet dhe RLS-në. Çelësi service_role nuk lejohet kurrë në aplikacion. Fajlli .env nuk bëhet kurrë commit.
 6. Fajllat e panevojshëm: fajlla pa lidhje me issue-n, ndryshime në package.json që issue-ja nuk i lejon, fajlla të gjeneruar.
 7. Përputhja: me Expo SDK 58, me Expo Go, dhe me ekranet ekzistuese.
 

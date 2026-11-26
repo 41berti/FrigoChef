@@ -1,17 +1,20 @@
 # Si punojmë në FrigoChef
 
-Ky udhëzues është për @Arianitxhafa, por rrjedha vlen për të dy: çdo detyrë ka issue, degë dhe PR. Alberti (@41berti) i rishikon dhe i bashkon PR-të.
+Alberti (@41berti) është pronari dhe zhvilluesi i vetëm i FrigoChef. Alberti dhe ChatGPT përcaktojnë kërkesat. Codex implementon, teston, dokumenton dhe përgatit PR-në. Vetëm Alberti e rishikon dhe e bashkon PR-në me squash merge.
+
+`EKIPI.md`, `PROGRES.md` dhe dokumentet e tjera të kursit ruhen si arkiv. Për punën e re ndiq rrjedhën më poshtë.
 
 ```text
-issue → degë nga main → commit-e → push → PR te main → rishikim → squash merge
+issue → degë nga main → commit-e → push → PR te main me "Closes #N"
+      → rishikim dhe squash merge nga Alberti → fshirje e degës
 ```
 
 ## 1. Merr detyrën
 
-Detyrat e tua i sheh te Issues në GitHub ose me:
+Gjej issue-n ekzistuese në GitHub ose ekzekuto komandën më poshtë. Lexo udhërrëfyesin para se të planifikosh një veçori. [Udhërrëfyesi i produktit](docs/ROADMAP.md)
 
 ```bash
-gh issue list --assignee @me
+gh issue list --state open
 ```
 
 Lexoje të gjithë issue-n, sidomos "Çka NUK duhet prekur" dhe "Gati kur…".
@@ -21,17 +24,16 @@ Lexoje të gjithë issue-n, sidomos "Çka NUK duhet prekur" dhe "Gati kur…".
 
 ## 2. Krijo degën
 
-Emri i degës është te issue-ja dhe ka formën `java<N>/pershkrim-i-shkurter`.
+Përdor një emër përshkrues me numrin e issue-s, për shembull `docs/29-product-roadmap`. Krijo degën nga `origin/main` pas fetch-it.
 
 ```bash
-git switch main
-git pull
-git switch -c java5/supabase-setup
+git fetch origin
+git switch -c docs/29-product-roadmap origin/main
 ```
 
 Nisu gjithmonë nga `main` i përditësuar. Çdo issue e ka degën e vet.
 
-Nëse `package.json` ndryshoi pas `git pull`, ekzekuto `npm install` brenda `projekti-im/`.
+Kur ndryshojnë varësitë, ekzekuto `npm ci` brenda `projekti-im/`.
 
 ## 3. Bëj commit dhe push
 
@@ -39,6 +41,7 @@ Prek vetëm fajllat që lidhen me issue-n. Para commit-it kontrollo kodin dhe sh
 
 ```bash
 cd projekti-im
+npx expo lint
 npx tsc --noEmit
 cd ..
 git status
@@ -48,8 +51,8 @@ Pastaj:
 
 ```bash
 git add <fajllat>
-git commit -m "Shto ekranin e kamerës"
-git push -u origin java5/supabase-setup
+git commit -m "Dokumento udhërrëfyesin e FrigoChef"
+git push -u origin docs/29-product-roadmap
 ```
 
 - `-u` duhet vetëm herën e parë. Më pas mjafton `git push`.
@@ -65,7 +68,7 @@ gh pr create --base main
 
 - Baza e PR-së duhet të jetë `main`.
 - Plotëso shabllonin. Te "Issue" shkruaj `Closes #N`, me numrin e issue-s, që ajo të mbyllet vetë pas merge-it.
-- Alberti caktohet automatikisht si rishikues.
+- Alberti është rishikuesi i vetëm. Për PR-në shëno çfarë u verifikua dhe jep komandat lokale të rishikimit. [Udhëzuesi i rishikimit](docs/AI-REVIEW.md)
 
 ## 5. Përgjigju komenteve
 
@@ -96,8 +99,8 @@ Kur PR-ja të jetë **Merged**, dega në GitHub fshihet automatikisht. Fshije ed
 
 ```bash
 git switch main
-git pull --prune
-git branch -D java5/supabase-setup
+git pull --ff-only --prune
+git branch -D docs/29-product-roadmap
 ```
 
 `-D` me të madhe duhet sepse squash merge krijon një commit të ri te `main`, dhe Git-i nuk e sheh degën si të bashkuar. Përdore vetëm pasi ta shohësh PR-në **Merged**.

@@ -8,8 +8,8 @@ Closes #
 <!-- Hapat pas `cd projekti-im` dhe `npx expo start`. Nëse aplikacioni nuk ndryshoi, shkruaje këtë. -->
 1. 
 
-## Si do ta shpjegoja në check-off
-<!-- 2–3 fjali me fjalët e tua. -->
+## Shpjegimi teknik
+<!-- Përshkruaj rrjedhën, vendimet dhe verifikimin. Për dokumentacion, përfshi burimet e kontrolluara. -->
 
 ## Checklist
 - [ ] Dega u krijua nga `main`
