@@ -1,97 +1,52 @@
 # FrigoChef 🧊🍳
 
-**Snap a photo of your fridge, get recipes you can cook right now.**
+**Find recipes you can cook with the ingredients you have.**
 
-FrigoChef is a mobile app built with **Expo Router** and **TypeScript**. The long-term idea: you take a photo of what's inside your fridge, and the app recommends recipes that use those ingredients.
+FrigoChef is a mobile app built with Expo Router, TypeScript and Supabase. It started as coursework for a mobile application development course and is maintained by Albert Begu. The product roadmap covers fridge scanning, AI recipe generation and longer-term plans. [Product roadmap](docs/ROADMAP.md) · [Contribution workflow](CONTRIBUTING.md)
 
-This repository is being built step by step as part of a university mobile-development course. The current version shows a list of recommended recipes (mock data) and a details screen for each one. The camera and recommendation features are planned for later stages.
+## Current features
 
----
+- Select ingredients by category and see matching recipes ranked by what you have.
+- Browse Supabase recipes and open their ingredients and cooking steps. Signed-in users can add recipes and delete their own.
+- Register and sign in with email. The app restores the session and supports signing out on the current device.
+- Choose Shqip or English and System, Light or Dark appearance. Preferences are saved on the device.
 
-## ✨ Features
+## Project structure
 
-**Done**
-- 📋 Recipe list rendered with `FlatList`, using a reusable `Kartela` card component
-- 🔗 Tap any recipe to open its details at `/artikull/[id]`
-- 🧾 Details screen showing name, cooking time, ingredients and description
-- 🛡️ "Not found" screen for invalid ids (e.g. `/artikull/x99`)
-- ✅ Fully type-checked with `tsc --noEmit`
+| Path | Contents |
+| --- | --- |
+| `projekti-im/src/app/` | Expo Router routes, including the Frigoriferi and Recetat tabs, the account flow and Settings |
+| `projekti-im/src/components/` | Shared UI and forms |
+| `projekti-im/src/data/` | Supabase client, recipe data access and ingredient matching |
+| `projekti-im/supabase/` | Historical schema SQL and versioned recipe ownership SQL |
+| `docs/` | Product roadmap, technical guides and historical sketches |
 
-**Planned**
-- 📸 Take or upload a photo of your fridge
-- 🧠 Detect ingredients from the photo
-- 🍽️ Recommend recipes based on what you actually have
+Identifiers follow the project's Albanian naming. `titulli` means title, `perberesit` means ingredients and `hapat` means steps.
 
----
+## Getting started
 
-## 🗂️ Project structure
-
-```
-src/
-├── app/
-│   ├── index.tsx            # Recipe list (home screen)
-│   └── artikull/
-│       └── [id].tsx         # Recipe details (dynamic route)
-├── components/
-│   ├── Kartela.tsx          # Reusable card: titulli + teksti
-│   └── DemoGjendja.tsx      # let vs useState demo
-└── data/
-    └── artikujt.ts          # Artikull type, mock recipes, gjeArtikullin()
-```
-
-> The course is taught in Albanian, so identifiers follow Albanian naming:
-> `artikujt` = items, `titulli` = title, `pershkrimi` = description,
-> `perberesit` = ingredients, `kohaMinuta` = time in minutes.
-
----
-
-## 🚀 Getting started
-
-**Requirements:** Node.js (LTS) and the [Expo Go](https://expo.dev/go) app on your phone, or an Android/iOS emulator.
+Use Node.js and Expo Go for the project's Expo SDK, or an Android/iOS emulator. Clone the repository and install the locked dependencies.
 
 ```bash
-# 1. Clone the repo
 git clone https://github.com/41berti/FrigoChef.git
-cd FrigoChef
+cd FrigoChef/projekti-im
+npm ci
+```
 
-# 2. Install dependencies
-npm install
+Set `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_KEY` in `projekti-im/.env` with the target's URL and publishable key. Then start Expo and scan the QR code. [Authentication and hosted schema](docs/AUTHENTICATION.md)
 
-# 3. Start the dev server
+```bash
 npx expo start
 ```
 
-Then scan the QR code with Expo Go, or press `a` (Android) / `i` (iOS) to open an emulator.
-
-### Type-check
+Run checks from `projekti-im/`.
 
 ```bash
+npx expo lint
 npx tsc --noEmit
+node --test tests/auth.test.cjs tests/settings.test.cjs
 ```
 
----
-
-## 🧠 Key concepts
-
-| Concept | Why it matters |
-|---|---|
-| `keyExtractor={(item) => item.id}` | Uses a stable id instead of the array index, so each row keeps its own state when the list changes. |
-| Ids as strings | The URL carries the id as text, so recipes are looked up with `a.id === id`, never `Number(id)`. |
-| `if (!artikulli)` guard | `gjeArtikullin()` can return `undefined`. Without the guard, TypeScript reports **TS18048** (*possibly 'undefined'*). |
-| File-based routing | The file `src/app/artikull/[id].tsx` *is* the route `/artikull/:id`. |
-
----
-
-## 🛠️ Tech stack
-
-- [Expo](https://expo.dev/) + [Expo Router](https://docs.expo.dev/router/introduction/)
-- React Native
-- TypeScript
-
----
-
-## 👤 Author
+## Author
 
 **Albert Begu** · [@41berti](https://github.com/41berti)
-
-Built as coursework for a mobile application development course.
