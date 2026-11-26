@@ -213,6 +213,8 @@ test("one header Back from Account reaches Recipes", async t => {
     await page.getByRole("checkbox", { name: "vezë", exact: true }).click();
     await page.getByRole("button", { name: /Shiko recetat/ }).click();
     await page.getByRole("link", { name: /Test recipe/ }).waitFor();
+    await headerBack();
+    await at("/");
     await page.getByRole("tab", { name: "Recetat", exact: true }).click();
     await recipes();
   });
