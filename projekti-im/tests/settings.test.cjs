@@ -82,7 +82,8 @@ test("real translator handles plural counts, arbitrary recipe titles and session
     t("detail.warning", { name: "Speca & vezë" }),
     "“Speca & vezë” will be permanently deleted.",
   );
-  assert.equal(t("pantry.vezë"), "eggs");
+  assert.equal(t("ingredientCategory.dairy"), "Dairy & eggs");
+  assert.equal(t("fridge.remove", { name: "eggs" }), "Remove eggs");
   assert.match(perkthyesi("sq")("auth.unconfirmed"), /Konfirmo/);
   assert.match(t("auth.unconfirmed"), /Confirm your email/);
 });

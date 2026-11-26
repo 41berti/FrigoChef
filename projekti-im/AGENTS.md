@@ -11,7 +11,7 @@ Problemi, nga 3 bisedat te `BISEDAT.md`: studenti ka ushqim në frigorifer, por 
 `src/app/_layout.tsx` ka dy tab-e me `NativeTabs` nga `expo-router/native-tabs`. Secili tab është një dosje me `Stack`-un e vet.
 
 - **Tab-i "Frigoriferi"** (`src/app/(frigoriferi)/`), rrjedha kryesore e `HARTA.md`:
-  - `index.tsx` · Ballina "Çka ke në frigorifer?": chip-at e përbërësve, numëruesi dhe butoni "Shiko recetat".
+  - `index.tsx` · Ballina "Çka ke në frigorifer?": katalogu vizual, kërkimi, shtesat manuale, numëruesi dhe butoni "Shiko recetat".
   - `lista.tsx` · "Recetat për ty" (`/lista`): recetat nga Supabase, të renditura sipas përputhjes me përbërësit e zgjedhur.
 - **Tab-i "Recetat"** (`src/app/(recetat)/`):
   - `recetat.tsx` · të gjitha recetat (`/recetat`).
@@ -29,8 +29,8 @@ Problemi, nga 3 bisedat te `BISEDAT.md`: studenti ka ushqim në frigorifer, por 
 - **Pronësia e recetave (#22)** u verifikua në skemën e projektit Supabase më 26 nëntor 2026. Vizitorët mund të lexojnë. Llogaritë e kyçura mund të shtojnë receta me pronësinë e tyre dhe të fshijnë vetëm recetat e veta jashtë recetave bazë. Klientët nuk kanë UPDATE. Për konfigurimin, historikun dhe testet shih [udhëzuesin e autentikimit](../docs/AUTHENTICATION.md#recipe-ownership-in-the-hosted-project).
 - `src/data/recetat.ts`: `merrRecetat()`, `merrReceten(id)`, `shtoReceten()` dhe `fshiReceten(id)`. Ekranet nuk e thërrasin `supabase` drejt.
 - `src/data/perputhja.ts`: i ndan përbërësit në "ke" dhe "mungon" dhe i rendit recetat.
-- `src/data/perberesit.ts`: grupet e chip-ave te Ballina.
-- `src/gjendja/zgjedhja.tsx`: përbërësit e zgjedhur, në një Context. Ruhen vetëm në memorie.
+- `src/data/perberesit.ts`: kërkimi dhe përputhja e emrave dygjuhësh me ID-të e katalogut JSON. [Kontrata e katalogut](../docs/INGREDIENT-CATALOG.md)
+- `src/gjendja/zgjedhja.tsx`: ID-të e zgjedhura dhe shtesat manuale, në një Context. Ruhen vetëm në memorie.
 - `src/data/artikujt.ts`: të dhënat e vjetra lokale. Mbetet në repo, por ekranet nuk e përdorin më.
 
 ### Pamja

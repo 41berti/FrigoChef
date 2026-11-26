@@ -10,6 +10,9 @@ const ikonat = {
   po: { ios: "checkmark", android: "check", web: "check" },
   ora: { ios: "clock", android: "schedule", web: "schedule" },
   gatimi: { ios: "fork.knife", android: "restaurant", web: "restaurant" },
+  kerko: { ios: "magnifyingglass", android: "search", web: "search" },
+  hiq: { ios: "xmark", android: "close", web: "close" },
+  shto: { ios: "plus", android: "add", web: "add" },
 } as const;
 
 type IkonaProps = {

@@ -172,7 +172,9 @@ test("recipe mutations deny guests, bind the verified owner and filter deletion"
 });
 
 test("existing refrigerator matching and legacy recipes remain supported", () => {
-  const ingredients = load("src/data/perberesit.ts", { "../i18n/en": load("src/i18n/en.ts") });
+  const ingredients = load("src/data/perberesit.ts", {
+    "./katalogu-perberesve.json": require("../src/data/katalogu-perberesve.json"),
+  });
   const api = load("src/data/perputhja.ts", { "@/data/perberesit": ingredients });
   assert.deepEqual(api.ndajPerberesit(["Eggs", "Vezë", "chili"], ["vezë"]), {
     ke: ["Eggs", "Vezë"], mungojne: ["chili"],

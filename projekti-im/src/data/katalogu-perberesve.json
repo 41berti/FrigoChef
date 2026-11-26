@@ -1,0 +1,701 @@
+{
+  "schemaVersion": 1,
+  "ingredients": [
+    {
+      "id": "chicken",
+      "category": "meat",
+      "names": { "sq": "mish pule", "en": "chicken" },
+      "aliases": {
+        "sq": ["pulë"],
+        "en": ["chicken meat"]
+      },
+      "emoji": "🍗",
+      "illustration": "chicken"
+    },
+    {
+      "id": "beef",
+      "category": "meat",
+      "names": { "sq": "mish viçi", "en": "beef" },
+      "aliases": {
+        "sq": ["viç"],
+        "en": ["beef meat"]
+      },
+      "emoji": "🥩"
+    },
+    {
+      "id": "pork",
+      "category": "meat",
+      "names": { "sq": "mish derri", "en": "pork" },
+      "aliases": {
+        "sq": ["derri"],
+        "en": ["pork meat"]
+      },
+      "emoji": "🥩"
+    },
+    {
+      "id": "salmon",
+      "category": "meat",
+      "names": { "sq": "salmon", "en": "salmon" },
+      "aliases": {
+        "sq": [],
+        "en": ["salmon fillet"]
+      },
+      "emoji": "🐟"
+    },
+    {
+      "id": "tuna",
+      "category": "meat",
+      "names": { "sq": "ton", "en": "tuna" },
+      "aliases": {
+        "sq": ["peshk ton"],
+        "en": ["tuna fish"]
+      },
+      "emoji": "🐟"
+    },
+    {
+      "id": "chickpea",
+      "category": "meat",
+      "names": { "sq": "qiqra", "en": "chickpeas" },
+      "aliases": {
+        "sq": ["qiqër"],
+        "en": ["garbanzo", "garbanzo beans", "chickpea"]
+      },
+      "emoji": "🫘"
+    },
+    {
+      "id": "lentil",
+      "category": "meat",
+      "names": { "sq": "thjerrëza", "en": "lentils" },
+      "aliases": {
+        "sq": ["thjerrëz"],
+        "en": ["lentil"]
+      },
+      "emoji": "🫘"
+    },
+    {
+      "id": "tofu",
+      "category": "meat",
+      "names": { "sq": "tofu", "en": "tofu" },
+      "aliases": {
+        "sq": [],
+        "en": ["bean curd"]
+      },
+      "emoji": "🧊"
+    },
+    {
+      "id": "ham",
+      "category": "meat",
+      "names": { "sq": "proshutë", "en": "ham" },
+      "aliases": {
+        "sq": ["proshutë derri"],
+        "en": ["cooked ham"]
+      },
+      "emoji": "🥓"
+    },
+    {
+      "id": "bean",
+      "category": "meat",
+      "names": { "sq": "fasule", "en": "beans" },
+      "aliases": {
+        "sq": ["pasul"],
+        "en": ["bean"]
+      },
+      "emoji": "🫘"
+    },
+    {
+      "id": "egg",
+      "category": "dairy",
+      "names": { "sq": "vezë", "en": "eggs" },
+      "aliases": {
+        "sq": ["vezët"],
+        "en": ["egg"]
+      },
+      "emoji": "🥚",
+      "illustration": "egg"
+    },
+    {
+      "id": "milk",
+      "category": "dairy",
+      "names": { "sq": "qumësht", "en": "milk" },
+      "aliases": {
+        "sq": [],
+        "en": ["cow milk", "cow's milk"]
+      },
+      "emoji": "🥛"
+    },
+    {
+      "id": "yogurt",
+      "category": "dairy",
+      "names": { "sq": "kos", "en": "yogurt" },
+      "aliases": {
+        "sq": [],
+        "en": ["yoghurt", "plain yogurt"]
+      },
+      "emoji": "🥛"
+    },
+    {
+      "id": "white-cheese",
+      "category": "dairy",
+      "names": { "sq": "djathë i bardhë", "en": "white cheese" },
+      "aliases": {
+        "sq": ["djathi i bardhë"],
+        "en": []
+      },
+      "emoji": "🧀",
+      "illustration": "white-cheese"
+    },
+    {
+      "id": "curd-cheese",
+      "category": "dairy",
+      "names": { "sq": "gjizë", "en": "curd cheese" },
+      "aliases": {
+        "sq": ["gjiza"],
+        "en": ["cheese curds"]
+      },
+      "emoji": "🧀"
+    },
+    {
+      "id": "butter",
+      "category": "dairy",
+      "names": { "sq": "gjalpë", "en": "butter" },
+      "aliases": {
+        "sq": ["gjalpi"],
+        "en": []
+      },
+      "emoji": "🧈"
+    },
+    {
+      "id": "mozzarella",
+      "category": "dairy",
+      "names": { "sq": "mocarela", "en": "mozzarella" },
+      "aliases": {
+        "sq": [],
+        "en": ["mozzarella cheese"]
+      },
+      "emoji": "🧀"
+    },
+    {
+      "id": "cheddar",
+      "category": "dairy",
+      "names": { "sq": "çedër", "en": "cheddar" },
+      "aliases": {
+        "sq": ["djathë çedër"],
+        "en": ["cheddar cheese"]
+      },
+      "emoji": "🧀"
+    },
+    {
+      "id": "tomato",
+      "category": "vegetables",
+      "names": { "sq": "domate", "en": "tomatoes" },
+      "aliases": {
+        "sq": ["domatja"],
+        "en": ["tomato"]
+      },
+      "emoji": "🍅",
+      "illustration": "tomato"
+    },
+    {
+      "id": "onion",
+      "category": "vegetables",
+      "names": { "sq": "qepë", "en": "onions" },
+      "aliases": {
+        "sq": ["qepa"],
+        "en": ["onion"]
+      },
+      "emoji": "🧅"
+    },
+    {
+      "id": "bell-pepper",
+      "category": "vegetables",
+      "names": { "sq": "speca", "en": "peppers" },
+      "aliases": {
+        "sq": ["spec", "spec i ëmbël", "speca të ëmbël"],
+        "en": ["bell pepper", "bell peppers", "sweet pepper", "sweet peppers", "capsicum"]
+      },
+      "emoji": "🫑",
+      "illustration": "bell-pepper"
+    },
+    {
+      "id": "carrot",
+      "category": "vegetables",
+      "names": { "sq": "karotë", "en": "carrots" },
+      "aliases": {
+        "sq": ["karota"],
+        "en": ["carrot"]
+      },
+      "emoji": "🥕",
+      "illustration": "carrot"
+    },
+    {
+      "id": "cucumber",
+      "category": "vegetables",
+      "names": { "sq": "kastravec", "en": "cucumber" },
+      "aliases": {
+        "sq": ["kastraveca", "tranguj", "trangull"],
+        "en": ["cucumbers"]
+      },
+      "emoji": "🥒",
+      "illustration": "cucumber"
+    },
+    {
+      "id": "zucchini",
+      "category": "vegetables",
+      "names": { "sq": "kungull i njomë", "en": "zucchini" },
+      "aliases": {
+        "sq": ["kungulleshka", "kunguj të njomë"],
+        "en": ["courgette", "courgettes", "zucchinis"]
+      },
+      "emoji": "🥒",
+      "illustration": "zucchini"
+    },
+    {
+      "id": "pea",
+      "category": "vegetables",
+      "names": { "sq": "bizele", "en": "peas" },
+      "aliases": {
+        "sq": ["bizelja"],
+        "en": ["green peas", "pea"]
+      },
+      "emoji": "🫛"
+    },
+    {
+      "id": "broccoli",
+      "category": "vegetables",
+      "names": { "sq": "brokoli", "en": "broccoli" },
+      "aliases": {
+        "sq": [],
+        "en": ["broccoli florets"]
+      },
+      "emoji": "🥦"
+    },
+    {
+      "id": "spinach",
+      "category": "vegetables",
+      "names": { "sq": "spinaq", "en": "spinach" },
+      "aliases": {
+        "sq": ["spinaqi"],
+        "en": ["spinach leaves"]
+      },
+      "emoji": "🥬"
+    },
+    {
+      "id": "eggplant",
+      "category": "vegetables",
+      "names": { "sq": "patëllxhan", "en": "eggplant" },
+      "aliases": {
+        "sq": ["patëllxhana"],
+        "en": ["aubergine", "aubergines", "eggplants"]
+      },
+      "emoji": "🍆"
+    },
+    {
+      "id": "spring-onion",
+      "category": "vegetables",
+      "names": { "sq": "qepë e njomë", "en": "spring onion" },
+      "aliases": {
+        "sq": ["qepë të njoma", "qepë e gjelbër"],
+        "en": ["scallion", "scallions", "spring onions", "green onion", "green onions"]
+      },
+      "emoji": "🧅"
+    },
+    {
+      "id": "lemon",
+      "category": "fruit",
+      "names": { "sq": "limon", "en": "lemon" },
+      "aliases": {
+        "sq": ["limona"],
+        "en": ["lemons"]
+      },
+      "emoji": "🍋",
+      "illustration": "lemon"
+    },
+    {
+      "id": "apple",
+      "category": "fruit",
+      "names": { "sq": "mollë", "en": "apple" },
+      "aliases": {
+        "sq": ["molla"],
+        "en": ["apples"]
+      },
+      "emoji": "🍎",
+      "illustration": "apple"
+    },
+    {
+      "id": "banana",
+      "category": "fruit",
+      "names": { "sq": "banane", "en": "banana" },
+      "aliases": {
+        "sq": ["bananja"],
+        "en": ["bananas"]
+      },
+      "emoji": "🍌"
+    },
+    {
+      "id": "orange",
+      "category": "fruit",
+      "names": { "sq": "portokall", "en": "orange" },
+      "aliases": {
+        "sq": ["portokaj"],
+        "en": ["oranges"]
+      },
+      "emoji": "🍊"
+    },
+    {
+      "id": "strawberry",
+      "category": "fruit",
+      "names": { "sq": "luleshtrydhe", "en": "strawberries" },
+      "aliases": {
+        "sq": ["dredhëza"],
+        "en": ["strawberry"]
+      },
+      "emoji": "🍓"
+    },
+    {
+      "id": "peach",
+      "category": "fruit",
+      "names": { "sq": "pjeshkë", "en": "peach" },
+      "aliases": {
+        "sq": ["pjeshka"],
+        "en": ["peaches"]
+      },
+      "emoji": "🍑"
+    },
+    {
+      "id": "avocado",
+      "category": "fruit",
+      "names": { "sq": "avokado", "en": "avocado" },
+      "aliases": {
+        "sq": [],
+        "en": ["avocados"]
+      },
+      "emoji": "🥑"
+    },
+    {
+      "id": "grape",
+      "category": "fruit",
+      "names": { "sq": "rrush", "en": "grapes" },
+      "aliases": {
+        "sq": ["rrushi"],
+        "en": ["grape"]
+      },
+      "emoji": "🍇"
+    },
+    {
+      "id": "rice",
+      "category": "grains",
+      "names": { "sq": "oriz", "en": "rice" },
+      "aliases": {
+        "sq": ["orizi"],
+        "en": []
+      },
+      "emoji": "🍚",
+      "illustration": "rice"
+    },
+    {
+      "id": "cooked-rice",
+      "category": "grains",
+      "names": { "sq": "oriz i gatuar", "en": "cooked rice" },
+      "aliases": {
+        "sq": ["oriz i mbetur", "oriz i zier"],
+        "en": ["leftover rice", "boiled rice"]
+      },
+      "emoji": "🍚"
+    },
+    {
+      "id": "pasta",
+      "category": "grains",
+      "names": { "sq": "makarona", "en": "pasta" },
+      "aliases": {
+        "sq": ["pasta"],
+        "en": ["dry pasta"]
+      },
+      "emoji": "🍝",
+      "illustration": "pasta"
+    },
+    {
+      "id": "flour",
+      "category": "grains",
+      "names": { "sq": "miell", "en": "flour" },
+      "aliases": {
+        "sq": ["mielli"],
+        "en": ["wheat flour", "all-purpose flour", "plain flour"]
+      },
+      "emoji": "🌾"
+    },
+    {
+      "id": "bread",
+      "category": "grains",
+      "names": { "sq": "bukë", "en": "bread" },
+      "aliases": {
+        "sq": ["buka"],
+        "en": []
+      },
+      "emoji": "🍞"
+    },
+    {
+      "id": "potato",
+      "category": "grains",
+      "names": { "sq": "patate", "en": "potatoes" },
+      "aliases": {
+        "sq": ["patatja"],
+        "en": ["potato"]
+      },
+      "emoji": "🥔"
+    },
+    {
+      "id": "oat",
+      "category": "grains",
+      "names": { "sq": "tërshërë", "en": "oats" },
+      "aliases": {
+        "sq": ["tërshëra"],
+        "en": ["oat", "rolled oats"]
+      },
+      "emoji": "🌾"
+    },
+    {
+      "id": "corn",
+      "category": "grains",
+      "names": { "sq": "misër", "en": "corn" },
+      "aliases": {
+        "sq": ["misri"],
+        "en": ["maize", "sweetcorn", "sweet corn"]
+      },
+      "emoji": "🌽"
+    },
+    {
+      "id": "garlic",
+      "category": "herbs",
+      "names": { "sq": "hudhër", "en": "garlic" },
+      "aliases": {
+        "sq": ["hudhra"],
+        "en": ["garlic clove", "garlic cloves"]
+      },
+      "emoji": "🧄",
+      "illustration": "garlic"
+    },
+    {
+      "id": "basil",
+      "category": "herbs",
+      "names": { "sq": "borzilok", "en": "basil" },
+      "aliases": {
+        "sq": ["borziloku"],
+        "en": ["basil leaves"]
+      },
+      "emoji": "🌿",
+      "illustration": "basil"
+    },
+    {
+      "id": "parsley",
+      "category": "herbs",
+      "names": { "sq": "majdanoz", "en": "parsley" },
+      "aliases": {
+        "sq": ["majdanozi"],
+        "en": []
+      },
+      "emoji": "🌿"
+    },
+    {
+      "id": "mint",
+      "category": "herbs",
+      "names": { "sq": "nenexhik", "en": "mint" },
+      "aliases": {
+        "sq": ["mente"],
+        "en": ["mint leaves"]
+      },
+      "emoji": "🌿"
+    },
+    {
+      "id": "oregano",
+      "category": "herbs",
+      "names": { "sq": "rigon", "en": "oregano" },
+      "aliases": {
+        "sq": ["rigoni"],
+        "en": []
+      },
+      "emoji": "🌿"
+    },
+    {
+      "id": "black-pepper",
+      "category": "herbs",
+      "names": { "sq": "piper i zi", "en": "black pepper" },
+      "aliases": {
+        "sq": ["piperi i zi"],
+        "en": ["ground black pepper"]
+      },
+      "emoji": "🧂"
+    },
+    {
+      "id": "chili-pepper",
+      "category": "herbs",
+      "names": { "sq": "spec djegës", "en": "chili pepper" },
+      "aliases": {
+        "sq": ["speca djegës", "spec djegës i kuq"],
+        "en": ["chili", "chilli", "chile", "hot pepper", "chili peppers"]
+      },
+      "emoji": "🌶️"
+    },
+    {
+      "id": "ginger",
+      "category": "herbs",
+      "names": { "sq": "xhenxhefil", "en": "ginger" },
+      "aliases": {
+        "sq": ["xhenxhefili"],
+        "en": ["ginger root"]
+      },
+      "emoji": "🫚"
+    },
+    {
+      "id": "olive-oil",
+      "category": "oils",
+      "names": { "sq": "vaj ulliri", "en": "olive oil" },
+      "aliases": {
+        "sq": ["vaj i ullirit"],
+        "en": ["oil of olives"]
+      },
+      "emoji": "🫒",
+      "illustration": "olive-oil"
+    },
+    {
+      "id": "cooking-oil",
+      "category": "oils",
+      "names": { "sq": "vaj", "en": "cooking oil" },
+      "aliases": {
+        "sq": ["vaj gatimi", "vaj për gatim"],
+        "en": ["oil"]
+      },
+      "emoji": "🫗"
+    },
+    {
+      "id": "sunflower-oil",
+      "category": "oils",
+      "names": { "sq": "vaj luledielli", "en": "sunflower oil" },
+      "aliases": {
+        "sq": ["vaj i lulediellit"],
+        "en": []
+      },
+      "emoji": "🌻"
+    },
+    {
+      "id": "soy-sauce",
+      "category": "oils",
+      "names": { "sq": "salcë soje", "en": "soy sauce" },
+      "aliases": {
+        "sq": ["salcë soja"],
+        "en": ["soya sauce"]
+      },
+      "emoji": "🍶"
+    },
+    {
+      "id": "vinegar",
+      "category": "oils",
+      "names": { "sq": "uthull", "en": "vinegar" },
+      "aliases": {
+        "sq": ["uthulla"],
+        "en": []
+      },
+      "emoji": "🍶"
+    },
+    {
+      "id": "tomato-sauce",
+      "category": "oils",
+      "names": { "sq": "salcë domatesh", "en": "tomato sauce" },
+      "aliases": {
+        "sq": ["salcë domateje"],
+        "en": []
+      },
+      "emoji": "🥫"
+    },
+    {
+      "id": "mustard",
+      "category": "oils",
+      "names": { "sq": "mustardë", "en": "mustard" },
+      "aliases": {
+        "sq": ["mustarda"],
+        "en": []
+      },
+      "emoji": "🫙"
+    },
+    {
+      "id": "mushroom",
+      "category": "other",
+      "names": { "sq": "kërpudha", "en": "mushrooms" },
+      "aliases": {
+        "sq": ["kërpudhë"],
+        "en": ["mushroom", "button mushrooms", "button mushroom"]
+      },
+      "emoji": "🍄",
+      "illustration": "mushroom"
+    },
+    {
+      "id": "olive",
+      "category": "other",
+      "names": { "sq": "ullinj", "en": "olives" },
+      "aliases": {
+        "sq": ["ulli"],
+        "en": ["olive"]
+      },
+      "emoji": "🫒"
+    },
+    {
+      "id": "salt",
+      "category": "other",
+      "names": { "sq": "kripë", "en": "salt" },
+      "aliases": {
+        "sq": ["kripa"],
+        "en": ["table salt"]
+      },
+      "emoji": "🧂"
+    },
+    {
+      "id": "sugar",
+      "category": "other",
+      "names": { "sq": "sheqer", "en": "sugar" },
+      "aliases": {
+        "sq": ["sheqeri"],
+        "en": []
+      },
+      "emoji": "🫙"
+    },
+    {
+      "id": "honey",
+      "category": "other",
+      "names": { "sq": "mjaltë", "en": "honey" },
+      "aliases": {
+        "sq": ["mjalti"],
+        "en": []
+      },
+      "emoji": "🍯"
+    },
+    {
+      "id": "walnut",
+      "category": "other",
+      "names": { "sq": "arra", "en": "walnuts" },
+      "aliases": {
+        "sq": ["arrë"],
+        "en": ["walnut"]
+      },
+      "emoji": "🌰"
+    },
+    {
+      "id": "almond",
+      "category": "other",
+      "names": { "sq": "bajame", "en": "almonds" },
+      "aliases": {
+        "sq": ["bajamja"],
+        "en": ["almond"]
+      },
+      "emoji": "🥜"
+    },
+    {
+      "id": "cocoa",
+      "category": "other",
+      "names": { "sq": "kakao", "en": "cocoa" },
+      "aliases": {
+        "sq": ["pluhur kakaoje"],
+        "en": ["cocoa powder", "cacao powder"]
+      },
+      "emoji": "🍫"
+    }
+  ]
+}

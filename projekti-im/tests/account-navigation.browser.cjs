@@ -27,7 +27,7 @@ async function mockSupabase(page) {
     user,
   };
   const recipe = {
-    id: "1", titulli: "Test recipe", koha_minuta: 10, perberesit: ["Vezë"], hapat: ["Test step"],
+    id: "1", titulli: "Test recipe", koha_minuta: 10, perberesit: ["Vezë", "Tahini"], hapat: ["Test step"],
   };
   await page.route("**/*", route => {
     const url = new URL(route.request().url());
@@ -54,7 +54,7 @@ test("one header Back from Account reaches Recipes", async t => {
   const button = name => page.getByRole("button", { name, exact: true }).filter({ visible: true });
   const press = name => button(name).click();
   const at = path => page.waitForFunction(path => location.pathname === path, path);
-  const open = path => page.goto(origin + path);
+  const open = path => page.goto(origin + path, { waitUntil: "domcontentloaded", timeout: 90000 });
   const headerBack = () => page.locator('[aria-label*="back" i]').filter({ visible: true }).first().click();
 
   async function openAccount() {
@@ -137,6 +137,13 @@ test("one header Back from Account reaches Recipes", async t => {
       });
       await english.getByRole("tab", { name: "Fridge", exact: true }).click();
       assert.equal(await eggs.getAttribute("aria-checked"), "true");
+      await english.waitForFunction(() => {
+        const box = document.querySelector('[role="checkbox"][aria-label="eggs"]')?.firstElementChild;
+        return box && getComputedStyle(box).transitionDuration.split(", ").every(value => value === "0s")
+          && document.documentElement.style.colorScheme === "dark";
+      });
+      const liveCount = english.locator('[aria-live="polite"]').filter({ hasText: "1 ingredient selected" });
+      await liveCount.waitFor();
       await english.getByRole("button", { name: /See recipes/ }).click();
       await english.getByRole("link", { name: /Test recipe/ }).click();
       await english.getByText("Vezë", { exact: true }).waitFor();
@@ -147,6 +154,53 @@ test("one header Back from Account reaches Recipes", async t => {
     }
   });
 
+  await t.test("fridge search, filter, manual entry, removal and custom recipe matching", async () => {
+    const fridge = await browser.newPage({ locale: "en-US", viewport: { width: 390, height: 844 } });
+    try {
+      await mockSupabase(fridge);
+      await fridge.goto(origin);
+      const search = fridge.getByRole("textbox", { name: "Search ingredients" });
+      const findRecipes = fridge.getByRole("button", { name: /See recipes/ });
+      const addManually = fridge.getByRole("button", { name: "Add manually" });
+      await search.waitFor();
+      assert.equal(await findRecipes.isDisabled(), true);
+      await search.fill("speca te embel");
+      const peppers = fridge.getByRole("checkbox", { name: "peppers", exact: true });
+      await peppers.click();
+      assert.equal(await peppers.getAttribute("aria-checked"), "true");
+      await fridge.getByRole("button", { name: "Remove peppers" }).click();
+      assert.equal(await peppers.getAttribute("aria-checked"), "false");
+      await fridge.getByRole("button", { name: "Clear ingredient search" }).click();
+      const dairy = fridge.getByRole("button", { name: "Dairy & eggs", exact: true });
+      await dairy.click();
+      assert.equal(await dairy.getAttribute("aria-pressed"), "true");
+      assert.equal(await fridge.getByRole("checkbox", { name: "chicken", exact: true }).count(), 0);
+      await fridge.getByRole("button", { name: "All", exact: true }).click();
+      await search.fill("tahini");
+      await fridge.getByText("No ingredients match your search.", { exact: true }).waitFor();
+      await addManually.click();
+      const input = fridge.getByRole("textbox", { name: "Ingredient name" });
+      assert.equal(await input.inputValue(), "tahini");
+      await input.fill("Tahini");
+      await fridge.getByRole("button", { name: "Add ingredient", exact: true }).click();
+      await fridge.getByText("1 ingredient selected", { exact: true }).waitFor();
+      const tahini = fridge.getByRole("checkbox", { name: "Tahini", exact: true });
+      assert.equal(await tahini.getAttribute("aria-checked"), "true");
+      await addManually.click();
+      await input.fill("TAHINI");
+      await input.press("Enter");
+      await fridge.getByText("1 ingredient selected", { exact: true }).waitFor();
+      assert.equal(await tahini.count(), 1);
+      await findRecipes.click();
+      await fridge.getByRole("link", { name: /Test recipe/ }).click();
+      await fridge.waitForURL("**/artikull/1");
+      await fridge.getByText("Test step", { exact: true }).waitFor();
+      await fridge.getByText("Tahini", { exact: true }).filter({ visible: true }).waitFor();
+    } finally {
+      await fridge.close();
+    }
+  });
+
   await t.test("login from the refrigerator", async () => {
     await open("/");
     await openAccount();
@@ -154,6 +208,13 @@ test("one header Back from Account reaches Recipes", async t => {
     await submit();
     await profile();
     await backToRecipes();
+    await page.getByRole("tab", { name: "Frigoriferi", exact: true }).click();
+    await page.getByRole("textbox", { name: "Kërko përbërës" }).fill("eggs");
+    await page.getByRole("checkbox", { name: "vezë", exact: true }).click();
+    await page.getByRole("button", { name: /Shiko recetat/ }).click();
+    await page.getByRole("link", { name: /Test recipe/ }).waitFor();
+    await page.getByRole("tab", { name: "Recetat", exact: true }).click();
+    await recipes();
   });
   await t.test("repeated signed-in visits from Recipes", async () => {
     for (let i = 0; i < 2; i++) {
