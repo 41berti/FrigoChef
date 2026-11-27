@@ -21,6 +21,7 @@ Problemi, nga 3 bisedat te `BISEDAT.md`: studenti ka ushqim në frigorifer, por 
 - `src/gjendja/autentikimi.tsx`: sesioni i përbashkët, restaurimi dhe pastrimi i
   listener-ave. `src/data/llogaria.ts`: thirrjet e Supabase Auth. Ruajtja native
   përdor `expo-secure-store`; web-i përdor localStorage.
+- **Kuzhina ime:** `kuzhina-ime.tsx` hapet nga Cilësimet për vizitorët dhe llogaritë e kyçura. Zgjedhjet ruhen në pajisje. [Kontrata dhe testet](../docs/MY-KITCHEN.md)
 - **Detajet e recetës** (`src/app/(frigoriferi,recetat)/artikull/[id].tsx`): dosja me dy emra e vendos ekranin në të dy tab-et. Tregon përbërësit (ke / mungon) dhe hapat me numra.
 
 ### Të dhënat

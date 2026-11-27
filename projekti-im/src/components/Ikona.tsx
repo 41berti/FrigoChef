@@ -13,6 +13,8 @@ const ikonat = {
   kerko: { ios: "magnifyingglass", android: "search", web: "search" },
   hiq: { ios: "xmark", android: "close", web: "close" },
   shto: { ios: "plus", android: "add", web: "add" },
+  kuzhina: { ios: "frying.pan", android: "skillet", web: "skillet" },
+  shigjeta: { ios: "chevron.right", android: "chevron_right", web: "chevron_right" },
 } as const;
 
 type IkonaProps = {

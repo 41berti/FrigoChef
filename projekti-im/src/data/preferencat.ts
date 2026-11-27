@@ -25,9 +25,9 @@ export function lexoPreferencat(teksti: string | null): Preferenca {
   }
 }
 
-export function krijoRuajtjen(ruaj: (v: string) => Promise<void>) {
+export function krijoRuajtjen<T = Preferenca>(ruaj: (v: string) => Promise<void>) {
   let radha = Promise.resolve();
-  return (v: Preferenca) => {
+  return (v: T) => {
     const shkrimi = radha.then(() => ruaj(JSON.stringify(v)));
     radha = shkrimi.catch(() => {});
     return shkrimi;
