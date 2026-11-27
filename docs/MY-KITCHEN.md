@@ -56,7 +56,7 @@ npx tsc --noEmit
 node --test tests/auth.test.cjs tests/settings.test.cjs tests/ingredient-catalog.test.cjs tests/my-kitchen.test.cjs
 ```
 
-The Chrome suite uses synthetic Auth and recipe data. [Browser setup](AUTHENTICATION.md#account-navigation-review)
+On 27 November 2026, Expo lint, TypeScript, 22 Node tests, 14 Chrome scenarios and the web, iOS and Android exports passed. The Chrome suite used the compiled web export with synthetic Auth and recipe data. Physical-device checks are listed below. [Browser suite and fixture setup](AUTHENTICATION.md#account-navigation-review)
 
 ### Physical-device check
 
