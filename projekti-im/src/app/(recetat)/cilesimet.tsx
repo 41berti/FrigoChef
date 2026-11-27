@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Animated from "react-native-reanimated";
 
@@ -90,6 +91,27 @@ export default function Cilesimet() {
         <Teksti lloji="etiketa" ngjyra="tekstiDytesor" accessibilityRole="header">
           {t("settings.general")}
         </Teksti>
+        <Link href="/kuzhina-ime" asChild>
+          <Pressable
+            accessibilityRole="link"
+            accessibilityLabel={t("kitchen.title")}
+            accessibilityHint={t("kitchen.openHint")}
+            style={({ pressed }) => [
+              styles.kuzhina,
+              { backgroundColor: n.siperfaqja, borderColor: n.kufiriIFushes },
+              pressed && styles.shtypur,
+            ]}
+          >
+            <View style={[styles.ikonaKuzhines, { backgroundColor: n.primareEZbehte }]}>
+              <Ikona emri="kuzhina" madhesia={24} ngjyra="primareTeksti" />
+            </View>
+            <View style={styles.pershkrimiKuzhines}>
+              <Teksti lloji="trupiITheksuar">{t("kitchen.title")}</Teksti>
+              <Teksti lloji="dytesor" ngjyra="tekstiDytesor">{t("kitchen.openHint")}</Teksti>
+            </View>
+            <Ikona emri="shigjeta" />
+          </Pressable>
+        </Link>
         <View style={styles.seksioni}>
           <Teksti lloji="nentitull" accessibilityRole="header">
             {t("settings.language")}
@@ -155,6 +177,15 @@ const styles = StyleSheet.create({
     padding: hapesira.xl,
     gap: hapesira.xxl,
   },
+  kuzhina: {
+    alignItems: "center", borderRadius: rrezet.madhe, borderWidth: 1,
+    flexDirection: "row", gap: hapesira.m, padding: hapesira.l,
+  },
+  ikonaKuzhines: {
+    alignItems: "center", borderRadius: rrezet.mesme, height: permasat.prekjaMinimale,
+    justifyContent: "center", width: permasat.prekjaMinimale,
+  },
+  pershkrimiKuzhines: { flex: 1, gap: hapesira.xs },
   seksioni: { gap: hapesira.m },
   grupi: { flexDirection: "row", flexWrap: "wrap", gap: hapesira.s },
   prekja: { flexGrow: 1, flexBasis: 88 },

@@ -201,6 +201,67 @@ test("one header Back from Account reaches Recipes", async t => {
     }
   });
 
+  await t.test("guest kitchen drafts, saving, language, appearance, restart and confirmed clearing", async () => {
+    const kitchen = await browser.newPage({ locale: "en-US", viewport: { width: 390, height: 844 } });
+    try {
+      await mockSupabase(kitchen);
+      await kitchen.goto(origin, { waitUntil: "domcontentloaded", timeout: 90000 });
+      await kitchen.getByRole("button", { name: "Account", exact: true }).click();
+      await kitchen.getByRole("button", { name: "Settings", exact: true }).click();
+      await kitchen.getByRole("link", { name: "My Kitchen", exact: true }).click();
+      await kitchen.waitForURL("**/kuzhina-ime");
+      await kitchen.getByText("Kitchen not set up yet.").waitFor();
+      const oven = kitchen.getByRole("checkbox", { name: "Oven", exact: true });
+      const toaster = kitchen.getByRole("checkbox", { name: "Toaster", exact: true });
+      assert.equal(await kitchen.getByRole("checkbox").count(), 12);
+      await oven.click();
+      await toaster.click();
+      await kitchen.getByText("2 items selected", { exact: true }).waitFor();
+      await toaster.click();
+      await kitchen.getByText("1 item selected", { exact: true }).waitFor();
+      await kitchen.reload({ waitUntil: "domcontentloaded" });
+      await kitchen.getByText("Kitchen not set up yet.").waitFor();
+      assert.equal(await oven.getAttribute("aria-checked"), "false");
+      await oven.click();
+      await kitchen.getByRole("button", { name: "Save equipment", exact: true }).click();
+      await kitchen.getByText("Kitchen saved.", { exact: true }).waitFor();
+      await kitchen.reload({ waitUntil: "domcontentloaded" });
+      await kitchen.getByText("Saved on this device.", { exact: true }).waitFor();
+      assert.equal(await oven.getAttribute("aria-checked"), "true");
+
+      await kitchen.goto(origin + "/cilesimet", { waitUntil: "domcontentloaded" });
+      await kitchen.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+      await kitchen.getByRole("radio", { name: "Dark", exact: true }).click();
+      await kitchen.getByRole("radio", { name: "Shqip", exact: true }).click();
+      await kitchen.getByRole("link", { name: "Kuzhina ime", exact: true }).click();
+      const furra = kitchen.getByRole("checkbox", { name: "Furrë", exact: true });
+      await furra.waitFor();
+      assert.equal(await furra.getAttribute("aria-checked"), "true");
+      await kitchen.waitForFunction(() => {
+        const card = document.querySelector('[role="checkbox"][aria-label="Furrë"]')?.firstElementChild;
+        return card && getComputedStyle(card).transitionDuration.split(", ").every(value => value === "0s")
+          && document.documentElement.style.colorScheme === "dark";
+      });
+
+      const clear = kitchen.getByRole("button", { name: "Pastro të gjitha", exact: true });
+      kitchen.once("dialog", dialog => dialog.dismiss());
+      await clear.click();
+      assert.equal(await furra.getAttribute("aria-checked"), "true");
+      await furra.click();
+      kitchen.once("dialog", dialog => dialog.dismiss());
+      await kitchen.getByRole("button", { name: "Ruaj pajisjet", exact: true }).click();
+      assert.equal(await kitchen.evaluate(() => localStorage.getItem("frigochef.equipment.v1")), '["oven"]');
+      kitchen.once("dialog", dialog => dialog.accept());
+      await clear.click();
+      await kitchen.getByText("Kuzhina u ruajt.", { exact: true }).waitFor();
+      await kitchen.reload({ waitUntil: "domcontentloaded" });
+      await kitchen.getByText("Ruajtur pa pajisje.", { exact: true }).waitFor();
+      assert.equal(await furra.getAttribute("aria-checked"), "false");
+    } finally {
+      await kitchen.close();
+    }
+  });
+
   await t.test("login from the refrigerator", async () => {
     await open("/");
     await openAccount();
@@ -217,6 +278,15 @@ test("one header Back from Account reaches Recipes", async t => {
     await at("/");
     await page.getByRole("tab", { name: "Recetat", exact: true }).click();
     await recipes();
+    await openAccount();
+    await press("Cilësimet");
+    await page.getByRole("link", { name: "Kuzhina ime", exact: true }).click();
+    await page.getByRole("checkbox", { name: "Furrë", exact: true }).waitFor();
+    await headerBack();
+    await at("/cilesimet");
+    await headerBack();
+    await at("/llogaria");
+    await backToRecipes();
   });
   await t.test("repeated signed-in visits from Recipes", async () => {
     for (let i = 0; i < 2; i++) {
